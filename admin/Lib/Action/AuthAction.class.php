@@ -28,7 +28,7 @@ class AuthAction extends BaseAction{
 		$adm_session = es_session::get(md5(conf("AUTH_KEY")));
 		$adm_name = $adm_session['adm_name'];
 		$adm_id = intval($adm_session['adm_id']);
-		
+                
 		if(intval(app_conf('EXPIRED_TIME'))>0&&$adm_id!=0){
 			
 			$admin_logined_time = intval($adm_session['admin_logined_time']);

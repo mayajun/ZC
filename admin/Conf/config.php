@@ -16,7 +16,8 @@ $array = array(
 	'PAGE_ROLLPAGE'         => 5,      // 分页显示页数
 	'PAGE_LISTROWS'         => 30,     // 分页每页显示记录数
 	//后台自动载入的类库
-	'APP_AUTOLOAD_PATH'     => 'Think.Util.,@.COM.',// __autoLoad 机制额外检测路径设置,注意搜索顺序	
+	'APP_AUTOLOAD_PATH'     => 'Think.Util.,@.COM.',// __autoLoad 机制额外检测路径设置,注意搜索顺序
+//    'SHOW_PAGE_TRACE' => true
 );
 if(file_exists(APP_ROOT_PATH.'system/config.php'))
 $config = array_merge($sys_config,$array);
