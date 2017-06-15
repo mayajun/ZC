@@ -1897,3 +1897,15 @@ array (
   'control_url' => '',
 )
 
+执行日期：2017-06-16-00�?M�?S
+manage_msg 参数1MSG_ADMIN_MANAGE,
+
+执行日期：2017-06-16-00�?M�?S
+manage_msg 参数2array (
+  'type' => '管理员登录',
+  'content' => 'admin登录成功',
+)
+
+执行日期：2017-06-16-00�?M�?S
+msg_admin_manage
+
