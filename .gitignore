@@ -6,3 +6,4 @@ composer.lock
 /public/runtime/*
 /public/session/*
 /public/db_config.php
+/public/attachment/*
