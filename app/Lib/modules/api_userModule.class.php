@@ -7,6 +7,7 @@
 // | Author: 甘味人生(526130@qq.com)
 // +----------------------------------------------------------------------
 
+
 class api_userModule extends BaseModule
 {
     /**
@@ -14,9 +15,15 @@ class api_userModule extends BaseModule
      * **/    
     public function infoEdit(){
         $id = $_REQUEST['id'];
-        $userInfo = M('user');
-        $info = $userInfo->select();
-        var_dump($info);
+        
+        $info = $GLOBALS['db']->getRow("select id,user_name,age,mobile from ".DB_PREFIX."user where id=".$id);
+        $info['head'] = get_user_avatar($info['id'],'middle');
+        //银行卡
+        $bank = $GLOBALS['db']->getRow("select * from".DB_PREFIX."user_bank where user_id=".$id);
+        $bankName = $GLOBALS['db']->getOne("select name from".DB_PREFIX."bank where id=".$bank['bank_id']);
+        
+        $info['bank'] = $bankName."(尾号".substr($bank['bankcard'], -4).")";
+        ajax_return(array("code"=>200,"data"=>$info,"info"=>"用户信息获取成功"));
     }
 }
 ?>
