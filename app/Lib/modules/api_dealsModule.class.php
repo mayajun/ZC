@@ -15,13 +15,21 @@ class api_dealsModule extends BaseModule
     public function index()
     {
 
-        $allData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal order by id desc LIMIT 0,8");
+        // 搜索条件
+        $query = '';
+        // 分类id
+        $cate_id = intval($_REQUEST['cate_id']);
+        if (0 != $cate_id) {
+            $query = 'where cate_id = ' . $cate_id;
+        }
+        // 查询众筹语句
+        $dealData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal " . $query . " order by id desc LIMIT 0,8");
 
-        if (!$allData) {
+        if (!$dealData) {
             return parent::JsonError('暂无数据');
         }
 
-        foreach ($allData as $data) {
+        foreach ($dealData as $data) {
             // 产品名称
             $subData['name'] = $data['name'] ? $data['name'] : '';
             // 目标金额
@@ -32,8 +40,28 @@ class api_dealsModule extends BaseModule
             $subData['begin_time'] = $data['begin_time'] ? $data['begin_time'] : 0;
             // 结束时间
             $subData['end_time'] = $data['end_time'] ? $data['end_time'] : 0;
+            // 支持人数
+            $subData['support_count'] = $data['support_count'] ? $data['support_count'] : 0;
+            // 热门
+            $subData['is_hot'] = $data['is_hot'] ? $data['is_hot'] : 0;
+            // 置顶
+            $subData['is_special'] = $data['is_special'] ? $data['is_special'] : 0;
+            // 用户id
+            if (!empty($data['user_id'])) {
+                $userIds[] = $data['user_id'];
+            } else {
+                return parent::JsonError('暂无数据');
+            }
 
             $apiData[] = $subData;
+        }
+
+        // 查询用户信息
+        $userData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "user where id in (" . implode(',', $userIds) . ")");
+
+        foreach ($apiData as $key => &$value) {
+            $value['user_name'] = $userData[$key]['user_name'];
+            $value['user_avatar'] = API_DOMAIN . get_user_avatar($userData[$key]['id']);
         }
 
         // 百分比计算
@@ -82,9 +110,9 @@ class api_dealsModule extends BaseModule
         foreach ($data as $key => $item) {
             if (isset($item['end_time'])) {
                 if ($item['end_time'] > $this->now) {
-                    $data[$key]['sur'] = '已过期';
+                    $data[$key]['sur'] = 0;
                 } else {
-                    $data[$key]['sur'] = intval(($item['end_time'] - $this->now) / 86400 );
+                    $data[$key]['sur'] = intval(($item['end_time'] - $this->now) / 86400);
                 }
             }
         }
