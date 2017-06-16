@@ -22,14 +22,22 @@ class api_dealsModule extends BaseModule
         if (0 != $cate_id) {
             $query = 'where cate_id = ' . $cate_id;
         }
+        // 每页条数
+        $item = 8;
+        if ($page = intval($_REQUEST['page'])) {
+            $limit['start'] = $item * $page;
+            $limit['end'] = $item * ($page + 1);
+        }
         // 查询众筹语句
-        $dealData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal " . $query . " order by id desc LIMIT 0,8");
+        $dealData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal " . $query . " order by id desc LIMIT {$limit['start']},{$limit['end']}");
 
         if (!$dealData) {
             return parent::JsonError('暂无数据');
         }
 
         foreach ($dealData as $data) {
+            // 产品id
+            $subData['id'] = $data['id'] ? $data['id'] : 0;
             // 产品名称
             $subData['name'] = $data['name'] ? $data['name'] : '';
             // 目标金额
@@ -66,7 +74,6 @@ class api_dealsModule extends BaseModule
 
         // 百分比计算
         $apiData = $this->perOfDone($apiData);
-
         // 剩余时间计算
         $apiData = $this->surDay($apiData);
 
@@ -80,6 +87,31 @@ class api_dealsModule extends BaseModule
         echo 'app';
         die;
     }
+
+    // 查询分类
+    public function getCateList()
+    {
+        // 查询分类语句
+        $dealData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_cate order by sort");
+        if (!$dealData) {
+            return parent::JsonError('暂无数据');
+        }
+        return parent::JsonSuccess($dealData);
+    }
+
+    // public function getDetail()
+    // {
+    //     $id = $_REQUEST['id'];
+    //
+    //     $id = intval($id);
+    //     if (empty($id) || $id == 0) {
+    //         return parent::JsonError('参数错误');
+    //     }
+    //     // 获取众筹详情
+    //     $data = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal where id=".$id);
+    //     var_dump($data);
+    //         die;
+    // }
 
     /**
      * 计算完成百分比
