@@ -7,6 +7,9 @@
 // | Author: 甘味人生(526130@qq.com)
 // +----------------------------------------------------------------------
 
+// 定义接口域名
+require APP_ROOT_PATH."public/domain_config.php";
+
 class BaseModule
 {
     public function __construct()
@@ -18,6 +21,7 @@ class BaseModule
         $GLOBALS['dynamic_cache'] = $GLOBALS['cache']->get("APP_DYNAMIC_CACHE_" . MODULE_NAME . "_" . ACTION_NAME);
         $GLOBALS['cache']->set_dir(APP_ROOT_PATH . "public/runtime/data/avatar_cache/");
         $GLOBALS['dynamic_avatar_cache'] = $GLOBALS['cache']->get("AVATAR_DYNAMIC_CACHE"); //头像的动态缓存
+
 
         //设置返回前面的页面
         if ((MODULE_NAME == "index") ||
