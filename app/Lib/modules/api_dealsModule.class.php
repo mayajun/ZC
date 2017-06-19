@@ -24,10 +24,11 @@ class api_dealsModule extends BaseModule
         }
         // 每页条数
         $item = 8;
-        if ($page = intval($_REQUEST['page'])) {
-            $limit['start'] = $item * $page;
-            $limit['end'] = $item * ($page + 1);
-        }
+        $page = $_REQUEST['page']?intval($_REQUEST['page']):1;
+
+        $limit['start'] = $item * ($page-1);
+        $limit['end'] = $item * $page;
+
         // 查询众筹语句
         $dealData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal " . $query . " order by id desc LIMIT {$limit['start']},{$limit['end']}");
 
