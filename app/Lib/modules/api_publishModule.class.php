@@ -44,7 +44,7 @@ class api_publishModule extends BaseModule
      * **/
     public function publish(){
         //接收数据
-        $data = intval($_REQUEST);
+        $data = $_REQUEST;
         if(!$data){
             return parent::JsonError('参数错误');
         }
