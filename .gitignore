@@ -8,3 +8,5 @@ composer.lock
 public/db_config.php
 /public/attachment/*
 db_config.php
+public/avatar/
+public/images/api_upload/
