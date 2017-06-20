@@ -24,9 +24,9 @@ class api_dealsModule extends BaseModule
         }
         // 每页条数
         $item = 8;
-        $page = $_REQUEST['page']?intval($_REQUEST['page']):1;
+        $page = $_REQUEST['page'] ? intval($_REQUEST['page']) : 1;
 
-        $limit['start'] = $item * ($page-1);
+        $limit['start'] = $item * ($page - 1);
         $limit['end'] = $item * $page;
 
         // 查询众筹语句
@@ -89,7 +89,7 @@ class api_dealsModule extends BaseModule
         die;
     }
 
-    // 查询分类
+    // 获取众筹分类
     public function getCateList()
     {
         // 查询分类语句
@@ -100,19 +100,57 @@ class api_dealsModule extends BaseModule
         return parent::JsonSuccess($dealData);
     }
 
-    // public function getDetail()
-    // {
-    //     $id = $_REQUEST['id'];
-    //
-    //     $id = intval($id);
-    //     if (empty($id) || $id == 0) {
-    //         return parent::JsonError('参数错误');
-    //     }
-    //     // 获取众筹详情
-    //     $data = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal where id=".$id);
-    //     var_dump($data);
-    //         die;
-    // }
+    /**
+     * 图片上传
+     * @return bool|string|void
+     */
+    public function fileUpload()
+    {
+        // 判断是否为多文件上传
+        if (!is_array($_FILES['upload']['error'])) {
+            return parent::JsonError('请使用多文件上传设置，传递文件为数组，每个文件名后加[]即可');
+        }
+        // 判断上传状态
+        foreach ($_FILES['upload']['error'] as $err) {
+            if (0 != $err) {
+                return parent::JsonError('上传失败，请重试！');
+            }
+        }
+        // 判断上传文件MIME类型合法性
+        foreach ($_FILES['upload']['type'] as $type) {
+            if (!in_array($type, ['image/jpeg', 'image/png', 'image/gif', 'image/bmp'])) {
+                return parent::JsonError('文件类型非法');
+            }
+        }
+        // 判断上传文件大小合法性 2 * 1024 * 1024
+        foreach ($_FILES['upload']['size'] as $size) {
+            if ($size > 2097152) {
+                return parent::JsonError('文件限制最大为2M');
+            }
+        }
+        // 获取文件后缀名
+        $base_path = "public/images/api_upload/"; //接收文件目录
+        foreach ($_FILES['upload']['name'] as $name) {
+            $uploadInfo = explode('.', $name);
+            $ext = strtolower(array_pop($uploadInfo));
+            // 判断后缀名合法性
+            if (!in_array($ext, ['jpg', 'png', 'gif', 'bmp'])) {
+                return parent::JsonError('文件后缀名错误！');
+            }
+            $newFileName = md5(basename($_FILES ['upload'] ['name']) . time() . rand(0, 99999999)) . $ext;
+            $target_path[] = APP_ROOT_PATH . $base_path . $newFileName;
+            $url_path[] = $base_path . $newFileName;
+        }
+        // 转移文件
+        foreach ($_FILES ['upload'] ['tmp_name'] as $key => $tmpName) {
+            if (move_uploaded_file($tmpName, $target_path[$key])) {
+                $saveName[] = $url_path[$key];
+            } else {
+                return parent::JsonError('未知错误请稍后再试');
+            }
+        }
+        return parent::JsonSuccess($saveName);
+    }
 
     /**
      * 计算完成百分比
