@@ -151,35 +151,6 @@ class api_dealsModule extends BaseModule
         }
         return parent::JsonSuccess($saveName);
     }
-    /**
-     * ---
-
-     * ### 单/多文件上传接口
-
-    接口地址：[http://API\_DOMAIN/index.php?ctl=api_deals&act=fileUpload](http://www.zc.local.com/index.php?ctl=api_deals&act=fileUpload)
-
-    请求方式：post
-
-    参 数：
-
-    upload[](文件资源类型)
-    注意：这里无论单文件还是多文件，上传文件名要写成upload[]
-
-
-    返 回 值：
-
-    ```
-
-    {
-    "status_code": 200,
-    "message": "成功",
-    "data": [ // 这里返回的是根目录下位置
-    "public/images/api_upload/135938b1f40bacb55a170f7cbbc56017jpg",
-    "public/images/api_upload/3629423d466ba7cfba52adbf87e6ab50jpg"
-    ]
-    }
-    ```
-     */
 
     /**
      * 计算完成百分比
