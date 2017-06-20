@@ -49,7 +49,9 @@ class api_publishModule extends BaseModule
             return parent::JsonError('参数错误');
         }
         $res = $GLOBALS['db']->autoExecute(DB_PREFIX."deal",$data);
-        
+        $deal_id = $GLOBALS['db']->getOne("select id from ".DB_PREFIX."deal order by id desc");
+        //插入图片
+        $res2 = $GLOBALS['db']->autoExecute(DB_PREFIX."deal_image",$data['images']);
         if($res){
             return parent::JsonSuccess();
         }else{
