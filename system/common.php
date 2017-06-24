@@ -9,6 +9,8 @@
 
 //前后台加载的函数库
 
+// 2017/6/24 添加项目域名常量
+require_once (APP_ROOT_PATH."public/domain_config.php");
 
  
 //获取真实路径
@@ -27,7 +29,7 @@ function to_date($utc_time, $format = 'Y-m-d H:i:s') {
 		return '';
 	}
 	$timezone = intval(app_conf('TIME_ZONE'));
-	$time = $utc_time + $timezone * 3600; 
+	$time = $utc_time + $timezone * 3600;
 	return date ($format, $time );
 }
 
@@ -35,9 +37,9 @@ function to_date($utc_time, $format = 'Y-m-d H:i:s') {
 function to_timespan($str, $format = 'Y-m-d H:i:s')
 {
 	$timezone = intval(app_conf('TIME_ZONE'));
-	//$timezone = 8; 
+	//$timezone = 8;
 	$time = intval(strtotime($str));
-        
+
 	if($time!=0)
 	$time = $time - $timezone * 3600;
     return $time;
@@ -69,13 +71,13 @@ function filter_injection(&$request)
 				{
 						die("SQL Injection denied!");
 				}
-		
+
 				if(is_array($v))
-				{					
+				{
 					filter_injection($request[$k]);
 				}
 				else
-				{					
+				{
  					if(preg_match($pattern,$v,$match))
 					{
 						die("SQL Injection denied!");
@@ -107,7 +109,7 @@ function filter_request(&$request)
 				}
 			}
 		}
-		
+
 }
 
 function adddeepslashes(&$request)
@@ -123,7 +125,7 @@ function adddeepslashes(&$request)
 				{
 					$request[$k] = addslashes(trim($v));
 				}
-			}		
+			}
 }
 
 
@@ -185,32 +187,32 @@ function is_u8($string)
 function clear_cache()
 {
 		//系统后台缓存
-		clear_dir_file(get_real_path()."public/runtime/admin/Cache/");	
-		clear_dir_file(get_real_path()."public/runtime/admin/Data/_fields/");		
-		clear_dir_file(get_real_path()."public/runtime/admin/Temp/");	
-		clear_dir_file(get_real_path()."public/runtime/admin/Logs/");	
+		clear_dir_file(get_real_path()."public/runtime/admin/Cache/");
+		clear_dir_file(get_real_path()."public/runtime/admin/Data/_fields/");
+		clear_dir_file(get_real_path()."public/runtime/admin/Temp/");
+		clear_dir_file(get_real_path()."public/runtime/admin/Logs/");
 		@unlink(get_real_path()."public/runtime/admin/~app.php");
 		@unlink(get_real_path()."public/runtime/admin/~runtime.php");
 		@unlink(get_real_path()."public/runtime/admin/lang.js");
-		@unlink(get_real_path()."public/runtime/app/config_cache.php");	
-		
-		
+		@unlink(get_real_path()."public/runtime/app/config_cache.php");
+
+
 		//数据缓存
-		clear_dir_file(get_real_path()."public/runtime/app/data_caches/");				
+		clear_dir_file(get_real_path()."public/runtime/app/data_caches/");
 		clear_dir_file(get_real_path()."public/runtime/app/db_caches/");
 		$GLOBALS['cache']->clear();
 		clear_dir_file(get_real_path()."public/runtime/data/");
 
 		//模板页面缓存
-		clear_dir_file(get_real_path()."public/runtime/app/tpl_caches/");		
+		clear_dir_file(get_real_path()."public/runtime/app/tpl_caches/");
 		clear_dir_file(get_real_path()."public/runtime/app/tpl_compiled/");
-		@unlink(get_real_path()."public/runtime/app/lang.js");	
-		
+		@unlink(get_real_path()."public/runtime/app/lang.js");
+
 		//脚本缓存
-		clear_dir_file(get_real_path()."public/runtime/statics/");		
-			
-				
-		
+		clear_dir_file(get_real_path()."public/runtime/statics/");
+
+
+
 }
 function clear_dir_file($path)
 {
@@ -221,15 +223,15 @@ function clear_dir_file($path)
                 $check = is_dir( $path. $file );
                 if ( !$check )
                 {
-                    @unlink( $path . $file );                       
+                    @unlink( $path . $file );
                 }
-                else 
+                else
                 {
                  	if($file!='.'&&$file!='..')
                  	{
-                 		clear_dir_file($path.$file."/");              			       		
-                 	} 
-                 }           
+                 		clear_dir_file($path.$file."/");
+                 	}
+                 }
             }
             closedir( $dir );
             rmdir($path);
@@ -275,7 +277,7 @@ function msubstr($str, $start=0, $length=15, $charset="utf-8", $suffix=true)
 
 //字符编码转换
 if(!function_exists("iconv"))
-{	
+{
 	function iconv($in_charset,$out_charset,$str)
 	{
 		require 'libs/iconv.php';
@@ -286,7 +288,7 @@ if(!function_exists("iconv"))
 
 //JSON兼容
 if(!function_exists("json_encode"))
-{	
+{
 	function json_encode($data)
 	{
 		require_once 'libs/json.php';
@@ -295,7 +297,7 @@ if(!function_exists("json_encode"))
 	}
 }
 if(!function_exists("json_decode"))
-{	
+{
 	function json_decode($data)
 	{
 		require_once 'libs/json.php';
@@ -325,13 +327,13 @@ function hideMobile($mobile){
 function hideEmail($email){
 	 if($email!="")
 	 	{
-	 		return substr($email,0,-8)."*****".substr($email,-3);	
+	 		return substr($email,0,-8)."*****".substr($email,-3);
 	 	}
 	 else
 	 	{
 	 		return "";
 	 	}
-	 	
+
 }
 //验证手机号码
 function check_mobile($mobile)
@@ -388,21 +390,21 @@ function get_verify_code($verify_coder){
 function app_redirect($url,$time=0,$msg='')
 {
     //多行URL地址支持
-    $url = str_replace(array("\n", "\r"), '', $url);    
+    $url = str_replace(array("\n", "\r"), '', $url);
     if(empty($msg))
         $msg    =   "系统将在{$time}秒之后自动跳转到{$url}！";
     if (!headers_sent()) {
         // redirect
         if(0===$time) {
         	if(substr($url,0,1)=="/")
-        	{        		
+        	{
         		header("Location:".get_domain().$url);
         	}
         	else
         	{
         		header("Location:".$url);
         	}
-            
+
         }else {
             header("refresh:{$time};url={$url}");
             echo($msg);
@@ -435,28 +437,28 @@ function check_ipop_limit($ip_str,$module,$time_span=0,$id=0)
     	{
     		$check['ip']	=	 get_client_ip();
     		$check['time']	=	get_gmtime();
-    		es_session::set($module."_".$id."_ip",$check);    		
+    		es_session::set($module."_".$id."_ip",$check);
     		return true;  //不存在session时验证通过
     	}
-    	else 
-    	{   
+    	else
+    	{
     		$check['ip']	=	 get_client_ip();
-    		$check['time']	=	get_gmtime();    
+    		$check['time']	=	get_gmtime();
     		$origin	=	es_session::get($module."_".$id."_ip");
-    		
+
     		if($check['ip']==$origin['ip'])
     		{
     			if($check['time'] - $origin['time'] < $time_span)
     			{
     				return false;
     			}
-    			else 
+    			else
     			{
     				es_session::set($module."_".$id."_ip",$check);
-    				return true;  //不存在session时验证通过    				
+    				return true;  //不存在session时验证通过
     			}
     		}
-    		else 
+    		else
     		{
     			es_session::set($module."_".$id."_ip",$check);
     			return true;  //不存在session时验证通过
@@ -473,7 +475,7 @@ function gzip_out($content)
 	{
 		if(!headers_sent()&&extension_loaded("zlib")&&preg_match("/gzip/i",$_SERVER["HTTP_ACCEPT_ENCODING"]))
 		{
-			$content = gzencode($content,9);	
+			$content = gzencode($content,9);
 			header("Content-Encoding: gzip");
 			header("Content-Length: ".strlen($content));
 			echo $content;
@@ -483,7 +485,7 @@ function gzip_out($content)
 	}else{
 		echo $content;
 	}
-	
+
 }
 
 
@@ -527,7 +529,7 @@ function save_image_upload($upd_file, $key='',$dir='temp', $whs=array(),$is_wate
  		require_once APP_ROOT_PATH."system/utils/es_imagecls.php";
 		$image = new es_imagecls();
 		$image->max_size = intval(app_conf("MAX_IMAGE_SIZE"));
-		
+
 		$list = array();
 
 		if(empty($key))
@@ -605,7 +607,7 @@ function save_image_upload($upd_file, $key='',$dir='temp', $whs=array(),$is_wate
 		$water_image = APP_ROOT_PATH.app_conf("WATER_MARK");
 		$alpha = app_conf("WATER_ALPHA");
 		$place = app_conf("WATER_POSITION");
-		
+
 		foreach($list as $lkey=>$item)
 		{
 				//循环生成规格图
@@ -625,12 +627,12 @@ function save_image_upload($upd_file, $key='',$dir='temp', $whs=array(),$is_wate
 								$paths = pathinfo($list[$lkey]['thumb'][$tkey]['path']);
 								$path = $paths['dirname'];
 				        		$path = $path."/origin/";
-				        		if (!is_dir($path)) { 
+				        		if (!is_dir($path)) {
 						             @mkdir($path);
 						             @chmod($path, 0777);
-					   			}   	    
+					   			}
 				        		$filename = $paths['basename'];
-								@file_put_contents($path.$filename,@file_get_contents($list[$lkey]['thumb'][$tkey]['path']));      
+								@file_put_contents($path.$filename,@file_get_contents($list[$lkey]['thumb'][$tkey]['path']));
 								$image->water($list[$lkey]['thumb'][$tkey]['path'],$water_image,$alpha, $place);
 							}
 						}
@@ -641,24 +643,24 @@ function save_image_upload($upd_file, $key='',$dir='temp', $whs=array(),$is_wate
 				$paths = pathinfo($item['path']);
 				$path = $paths['dirname'];
         		$path = $path."/origin/";
-        		if (!is_dir($path)) { 
+        		if (!is_dir($path)) {
 		             @mkdir($path);
 		             @chmod($path, 0777);
-	   			}   	    
+	   			}
         		$filename = $paths['basename'];
-				@file_put_contents($path.$filename,@file_get_contents($item['path']));        		
+				@file_put_contents($path.$filename,@file_get_contents($item['path']));
 				$image->water($item['path'],$water_image,$alpha, $place);
 			}
-		}			
+		}
 		return $list;
 }
 
 function empty_tag($string)
-{	
+{
 	$string = preg_replace(array("/\[img\]\d+\[\/img\]/","/\[[^\]]+\]/"),array("",""),$string);
 	if(trim($string)=='')
 	return $GLOBALS['lang']['ONLY_IMG'];
-	else 
+	else
 	return $string;
 	//$string = str_replace(array("[img]","[/img]"),array("",""),$string);
 }
@@ -731,14 +733,14 @@ function div_str($str)
 {
 	require_once APP_ROOT_PATH."system/libs/words.php";
 	$words = words::segment($str);
-	$words[] = $str;	
+	$words[] = $str;
 	return $words;
 }
 
 
 
 /**
- * 
+ *
  * @param $tag  //要插入的关键词
  * @param $table  //表名
  * @param $id  //数据ID
@@ -748,9 +750,9 @@ function insert_match_item($tag,$table,$id,$field)
 {
 	if($tag=='')
 	return;
-	
+
 	$unicode_tag = str_to_unicode_string($tag);
-	$sql = "select count(*) from ".DB_PREFIX.$table." where match(".$field.") against ('".$unicode_tag."' IN BOOLEAN MODE) and id = ".$id;	
+	$sql = "select count(*) from ".DB_PREFIX.$table." where match(".$field.") against ('".$unicode_tag."' IN BOOLEAN MODE) and id = ".$id;
 	$rs = $GLOBALS['db']->getOne($sql);
 	if(intval($rs) == 0)
 	{
@@ -765,9 +767,9 @@ function insert_match_item($tag,$table,$id,$field)
 				$match_row[$field] = $match_row[$field].",".$unicode_tag;
 				$match_row[$field."_row"] = $match_row[$field."_row"].",".$tag;
 		}
-		$GLOBALS['db']->autoExecute(DB_PREFIX.$table, $match_row, $mode = 'UPDATE', "id=".$id, $querymode = 'SILENT');	
-		
-	}	
+		$GLOBALS['db']->autoExecute(DB_PREFIX.$table, $match_row, $mode = 'UPDATE', "id=".$id, $querymode = 'SILENT');
+
+	}
 }
 /**同步索引的示例
 function syn_supplier_match($supplier_id)
@@ -777,16 +779,16 @@ function syn_supplier_match($supplier_id)
 	{
 		$supplier['name_match'] = "";
 		$supplier['name_match_row'] = "";
-		$GLOBALS['db']->autoExecute(DB_PREFIX."supplier", $supplier, $mode = 'UPDATE', "id=".$supplier_id, $querymode = 'SILENT');	
-		
-		
+		$GLOBALS['db']->autoExecute(DB_PREFIX."supplier", $supplier, $mode = 'UPDATE', "id=".$supplier_id, $querymode = 'SILENT');
+
+
 		//同步名称
-		$name_arr = div_str(trim($supplier['name'])); 
+		$name_arr = div_str(trim($supplier['name']));
 		foreach($name_arr as $name_item)
 		{
 			insert_match_item($name_item,"supplier",$supplier_id,"name_match");
 		}
-		
+
 	}
 }
 */
@@ -801,16 +803,16 @@ function url($route="index",$param=array())
 		$url = $GLOBALS[$key];
 		return $url;
 	}
-	
+
 	$url = load_dynamic_cache($key);
 	if($url!==false)
 	{
 		$GLOBALS[$key] = $url;
 		return $url;
 	}
-	
+
 	$route_array = explode("#",$route);
-	
+
 	if(isset($param)&&$param!=''&&!is_array($param))
 	{
 		$param['id'] = $param;
@@ -821,7 +823,7 @@ function url($route="index",$param=array())
 
 	if(!$module||$module=='index')$module="";
 	if(!$action||$action=='index')$action="";
-	
+
 	if(app_conf("URL_MODEL")==0 || $module=='project' )
 	{
 	//原始模式
@@ -830,7 +832,7 @@ function url($route="index",$param=array())
 		{
 			$url.="?";
 		}
-	
+
 		if($module&&$module!='')
 		$url .= "ctl=".$module."&";
 		if($action&&$action!='')
@@ -860,8 +862,8 @@ function url($route="index",$param=array())
 			if($action&&$action!='')
 			$url .= "-".$action;
 		}
-		
-		
+
+
 		if(count($param)>0)
 		{
 			$url.="/";
@@ -870,7 +872,7 @@ function url($route="index",$param=array())
 				$url =$url.$k."-".urlencode($v)."-";
 			}
 		}
-		
+
 		$route = $module."#".$action;
 		switch ($route)
 		{
@@ -882,8 +884,8 @@ function url($route="index",$param=array())
 //		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-'){
 //			$url.='index';
 //		}
-				
-		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);		
+
+		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);
 		$url=trim($url);
 		if($url==''){
 			$url="/index.html";
@@ -901,13 +903,13 @@ function url($route="index",$param=array())
 					}
 				}elseif($param['p']){
 					$url=APP_ROOT."/article_cate?p=".$param['p'];
-					
+
 				}elseif($param['tag']){
 					$url=APP_ROOT."/article_cate?tag=".$param['tag'];
 				}
 				else{
 					$url=APP_ROOT."/article_cate";
-					
+
 				}
 			}elseif($module=='article'){
 				if($param['id']){
@@ -928,8 +930,8 @@ function url($route="index",$param=array())
 		set_dynamic_cache($key,$url);
 		return $url;
 	}
-	
-	
+
+
 }
 
 function url_wap($route="index",$param=array())
@@ -937,23 +939,23 @@ function url_wap($route="index",$param=array())
 	if($GLOBALS['is_app']){
 		$param['from_type'] = $GLOBALS['is_app'];
 	}
-	
+
 	$key = md5("URL_WAP_KEY_".$route.serialize($param));
 	if(isset($GLOBALS[$key]))
 	{
 		$url = $GLOBALS[$key];
 		return $url;
 	}
-	
+
 	$url = load_dynamic_cache($key);
 	if($url!==false)
 	{
 		$GLOBALS[$key] = $url;
 		return $url;
 	}
-	
+
 	$route_array = explode("#",$route);
-	
+
 	if(isset($param)&&$param!=''&&!is_array($param))
 	{
 		$param['id'] = $param;
@@ -964,7 +966,7 @@ function url_wap($route="index",$param=array())
 
 	if(!$module||$module=='index')$module="";
 	if(!$action||$action=='index')$action="";
-	
+
 	if(true)
 	{
 	//原始模式
@@ -973,7 +975,7 @@ function url_wap($route="index",$param=array())
 		{
 			$url.="?";
 		}
-	
+
 		if($module&&$module!='')
 		$url .= "ctl=".$module."&";
 		if($action&&$action!='')
@@ -1000,7 +1002,7 @@ function url_wap($route="index",$param=array())
 		$url .= "/".$module;
 		if($action&&$action!='')
 		$url .= "-".$action;
-		
+
 		if(count($param)>0)
 		{
 			$url.="/";
@@ -1009,7 +1011,7 @@ function url_wap($route="index",$param=array())
 				$url =$url.$k."-".urlencode($v)."-";
 			}
 		}
-		
+
 		$route = $module."#".$action;
 		switch ($route)
 		{
@@ -1018,16 +1020,16 @@ function url_wap($route="index",$param=array())
 				default:
 					break;
 		}
-				
-		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);		
-		
+
+		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);
+
 		if($url=='')$url="/";
 		$GLOBALS[$key] = $url;
 		set_dynamic_cache($key,$url);
 		return $url;
 	}
-	
-	
+
+
 }
 
 //封装url
@@ -1040,16 +1042,16 @@ function url_mapi($route="index",$param=array())
 		$url = $GLOBALS[$key];
 		return $url;
 	}
-	
+
 	$url = load_dynamic_cache($key);
 	if($url!==false)
 	{
 		$GLOBALS[$key] = $url;
 		return $url;
 	}
-	
+
 	$route_array = explode("#",$route);
-	
+
 	if(isset($param)&&$param!=''&&!is_array($param))
 	{
 		$param['id'] = $param;
@@ -1060,7 +1062,7 @@ function url_mapi($route="index",$param=array())
 
 	if(!$module||$module=='index')$module="";
 	if(!$action||$action=='index')$action="";
-	
+
 	if(app_conf("URL_MODEL")==0)
 	{
 	//原始模式
@@ -1069,7 +1071,7 @@ function url_mapi($route="index",$param=array())
 		{
 			$url.="?";
 		}
-	
+
 		if($module&&$module!='')
 		$url .= "ctl=".$module."&";
 		if($action&&$action!='')
@@ -1096,7 +1098,7 @@ function url_mapi($route="index",$param=array())
 		$url .= "/".$module;
 		if($action&&$action!='')
 		$url .= "-".$action;
-		
+
 		if(count($param)>0)
 		{
 			$url.="/";
@@ -1105,7 +1107,7 @@ function url_mapi($route="index",$param=array())
 				$url =$url.$k."-".urlencode($v)."-";
 			}
 		}
-		
+
 		$route = $module."#".$action;
 		switch ($route)
 		{
@@ -1114,16 +1116,16 @@ function url_mapi($route="index",$param=array())
 				default:
 					break;
 		}
-				
-		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);		
-		
+
+		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);
+
 		if($url=='')$url="/";
 		$GLOBALS[$key] = $url;
 		set_dynamic_cache($key,$url);
 		return $url;
 	}
-	
-	
+
+
 }
 
 //手机端 访问根目录的url
@@ -1135,16 +1137,16 @@ function url_root($route="index",$param=array())
 		$url = $GLOBALS[$key];
 		return $url;
 	}
-	
+
 	$url = load_dynamic_cache($key);
 	if($url!==false)
 	{
 		$GLOBALS[$key] = $url;
 		return $url;
 	}
-	
+
 	$route_array = explode("#",$route);
-	
+
 	if(isset($param)&&$param!=''&&!is_array($param))
 	{
 		$param['id'] = $param;
@@ -1155,7 +1157,7 @@ function url_root($route="index",$param=array())
 
 	if(!$module||$module=='index')$module="";
 	if(!$action||$action=='index')$action="";
-	
+
 	if(app_conf("URL_MODEL")==0)
 	{
 	//原始模式
@@ -1164,7 +1166,7 @@ function url_root($route="index",$param=array())
 		{
 			$url.="?";
 		}
-	
+
 		if($module&&$module!='')
 		$url .= "ctl=".$module."&";
 		if($action&&$action!='')
@@ -1191,7 +1193,7 @@ function url_root($route="index",$param=array())
 		$url .= "/".$module;
 		if($action&&$action!='')
 		$url .= "-".$action;
-		
+
 		if(count($param)>0)
 		{
 			$url.="/";
@@ -1200,7 +1202,7 @@ function url_root($route="index",$param=array())
 				$url =$url.$k."-".urlencode($v)."-";
 			}
 		}
-		
+
 		$route = $module."#".$action;
 		switch ($route)
 		{
@@ -1209,16 +1211,16 @@ function url_root($route="index",$param=array())
 				default:
 					break;
 		}
-				
-		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);		
-		
+
+		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);
+
 		if($url=='')$url="/";
 		$GLOBALS[$key] = $url;
 		set_dynamic_cache($key,$url);
 		return $url;
 	}
-	
-	
+
+
 }
 
 function unicode_encode($name) {//to Unicode
@@ -1281,7 +1283,7 @@ function set_dynamic_cache($name,$value)
 		{
 			array_shift($GLOBALS['dynamic_cache']);
 		}
-		$GLOBALS['dynamic_cache'][$name] = $value;		
+		$GLOBALS['dynamic_cache'][$name] = $value;
 	}
 }
 
@@ -1337,15 +1339,15 @@ function ajax_return($data,$is_debug=false)
 	        echo(json_encode($data));
 	        exit;
 		}else{
- 			
+
 			if($data['status']==0){
 				var_export($data);
 				echo "<br />";
 				exit;
 			}
-			
+
 		}
-			
+
 }
 
 
@@ -1381,7 +1383,7 @@ function update_sys_config()
 		{
 			$config_str.="'".$v['name']."'=>'".addslashes($v['value'])."',\n";
 		}
-		$config_str.=");\n ?>";	
+		$config_str.=");\n ?>";
 		file_put_contents($filename,$config_str);
 		$url = APP_ROOT."/";
 		app_redirect($url);
@@ -1396,25 +1398,25 @@ function gen_qrcode($str,$size = 5)
 
 	$root_dir = APP_ROOT_PATH."public/images/qrcode/";
  	if (!is_dir($root_dir)) {
-            @mkdir($root_dir);               
+            @mkdir($root_dir);
             @chmod($root_dir, 0777);
      }
-     
+
      $filename = md5($str."|".$size);
      $hash_dir = $root_dir. '/c' . substr(md5($filename), 0, 1)."/";
      if (!is_dir($hash_dir))
      {
         @mkdir($hash_dir);
         @chmod($hash_dir, 0777);
-     }   
-	
+     }
+
 	$filesave = $hash_dir.$filename.'.png';
 
 	if(!file_exists($filesave))
 	{
-		QRcode::png($str, $filesave, 'Q', $size, 2); 
-	}	
-	return APP_ROOT."/public/images/qrcode/c". substr(md5($filename), 0, 1)."/".$filename.".png";       
+		QRcode::png($str, $filesave, 'Q', $size, 2);
+	}
+	return APP_ROOT."/public/images/qrcode/c". substr(md5($filename), 0, 1)."/".$filename.".png";
 }
 
 function format_price($v)
@@ -1426,7 +1428,7 @@ function format_price($v)
 function syn_deal($deal_id)
 {
 	$deal_info = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."deal where id = ".$deal_id);
-	
+
 	if($deal_info)
 	{
 		$deal_info['comment_count'] = intval($GLOBALS['db']->getOne("select count(*) from ".DB_PREFIX."deal_comment where deal_id = ".$deal_info['id']." and log_id = 0"));
@@ -1437,14 +1439,14 @@ function syn_deal($deal_id)
 		$deal_info['support_amount']=floatval($support_amount);
 		$deal_info['delivery_fee_amount'] = floatval($GLOBALS['db']->getOne("select sum(delivery_fee) from ".DB_PREFIX."deal_order where deal_id = ".$deal_info['id']." and order_status=3 and is_refund=0"));
 		$deal_info['share_fee_amount'] = floatval($GLOBALS['db']->getOne("select sum(share_fee) from ".DB_PREFIX."deal_order where deal_id = ".$deal_info['id']." and order_status=3 and is_refund=0"));
-		
+
 		if($deal_info['pay_radio'] > 0){
 			$deal_info['pay_amount'] = ($deal_info['support_amount']*(1-$deal_info['pay_radio']))+$deal_info['delivery_fee_amount']-$deal_info['share_fee_amount'];
 		}
 		else
 		{
 			$deal_info['pay_amount'] = ($deal_info['support_amount']*(1-app_conf("PAY_RADIO")))+$deal_info['delivery_fee_amount']-$deal_info['share_fee_amount'];
-		
+
 		}
 		if($deal_info['type']==0||$deal_info['type']==3||$deal_info['type']==2){
 			$deal_info["virtual_num"]=$GLOBALS['db']->getOne("select sum(virtual_person) from ".DB_PREFIX."deal_item where deal_id=".$deal_id);
@@ -1457,7 +1459,7 @@ function syn_deal($deal_id)
 			{
 				$deal_info['is_success'] = 0;
 			}
-			
+
 		}elseif($deal_info['type']==1 ||$deal_info['type']==4){
 			$deal_info["gen_num"]=$GLOBALS['db']->getOne("select count(distinct(user_id)) from ".DB_PREFIX."investment_list where  type=2 and  deal_id=".$deal_id);
 			$deal_info["xun_num"]=$GLOBALS['db']->getOne("select count(distinct(user_id)) from ".DB_PREFIX."investment_list where  type=0 and  deal_id=".$deal_id);
@@ -1472,23 +1474,23 @@ function syn_deal($deal_id)
 				$deal_info['is_success'] = 0;
 			}
 		}
-		
+
 		if($deal_info['is_success']==1){
 				$paid_money=$GLOBALS['db']->getOne("select sum(money) from ".DB_PREFIX."deal_pay_log where deal_id=".$deal_id);
 				$deal_info['left_money']=$deal_info['pay_amount']-floatval($paid_money);
 			}
-  		
+
 		$deal_info['tags_match'] = "";
 		$deal_info['tags_match_row'] = "";
-		$GLOBALS['db']->autoExecute(DB_PREFIX."deal", $deal_info, $mode = 'UPDATE', "id=".$deal_info['id'], $querymode = 'SILENT');	
-		
+		$GLOBALS['db']->autoExecute(DB_PREFIX."deal", $deal_info, $mode = 'UPDATE', "id=".$deal_info['id'], $querymode = 'SILENT');
+
 		$tags_arr = preg_split("/[, ]/",$deal_info["tags"]);
 
 		foreach($tags_arr as $tgs){
 			if(trim($tgs)!="")
 			insert_match_item(trim($tgs),"deal",$deal_info['id'],"tags_match");
 		}
-		
+
 		$name_arr = div_str($deal_info['name']);
 		foreach($name_arr as $name_item){
 			if(trim($name_item)!="")
@@ -1508,7 +1510,7 @@ function send_user_password_mail($user_id)
 
 		$verify_code = rand(111111,999999);
 		$GLOBALS['db']->query("update ".DB_PREFIX."user set password_verify = '".$verify_code."' where id = ".$user_id);
-		$user_info = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."user where id = ".$user_id);			
+		$user_info = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."user where id = ".$user_id);
 		if($user_info)
 		{
 			$tmpl = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name = 'TPL_MAIL_USER_PASSWORD'");
@@ -1518,8 +1520,8 @@ function send_user_password_mail($user_id)
 			$time=get_gmtime();
 			$user_info['send_time']=to_date($time,'Y年m月d日');
 			$user_info['send_time_ms']=to_date($time,'Y年m月d日 H时i分');
-			
-			$user_info['password_url'] = get_domain().url("settings#password", array("code"=>$user_info['password_verify'],"id"=>$user_info['id']));			
+
+			$user_info['password_url'] = get_domain().url("settings#password", array("code"=>$user_info['password_verify'],"id"=>$user_info['id']));
 			$GLOBALS['tmpl']->assign("user",$user_info);
 			$msg = $GLOBALS['tmpl']->fetch("str:".$tmpl_content);
 			$msg_data['dest'] = $user_info['email'];
@@ -1546,7 +1548,7 @@ function btrim($str)
 }
 function valid_tag($str)
 {
-	
+
 	return preg_replace("/<(?!div|ol|ul|li|sup|sub|span|br|img|p|h1|h2|h3|h4|h5|h6|\/div|\/ol|\/ul|\/li|\/sup|\/sub|\/span|\/br|\/img|\/p|\/h1|\/h2|\/h3|\/h4|\/h5|\/h6|blockquote|\/blockquote|strike|\/strike|b|\/b|i|\/i|u|\/u)[^>]*>/i","",$str);
 }
 
@@ -1560,22 +1562,22 @@ function update_user_weibo($user_id,$weibo_url,$type=1)
 			if($GLOBALS['db']->getOne("select count(*) from ".DB_PREFIX."user_weibo where weibo_url = '".$weibo_url."' and user_id = ".$user_id)==0)
 			{
 				$weibo_data['user_id'] = $user_id;
-				$weibo_data['weibo_url'] = $weibo_url;				
+				$weibo_data['weibo_url'] = $weibo_url;
 				$GLOBALS['db']->autoExecute(DB_PREFIX."user_weibo",$weibo_data);
 			}
 		}
 		if($type==2)
 		{
 			$GLOBALS['db']->query("delete from ".DB_PREFIX."user_weibo where user_id = ".$user_id." and weibo_url = '".$weibo_url."'");
-		}		
+		}
 	}
 }
 
 //返回array: status:0:未支付 1:已支付(过期) 2:已支付(无库存) 3:成功  money:剩余需支付金额 4:已支付但未判定（锁住订单）5:订单内余额不足，购买失败
 function pay_order($order_id)
 {
-	
-	require_once APP_ROOT_PATH."system/libs/user.php";	
+
+	require_once APP_ROOT_PATH."system/libs/user.php";
 	$order_info = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."deal_order where id = ".$order_id);
 	$user=$GLOBALS['db']->getRow("select * from ".DB_PREFIX."user where id=".$order_info['user_id']);
 
@@ -1585,13 +1587,13 @@ function pay_order($order_id)
 		$result['status'] = 0;
 		return $result;
 	}
-	
+
 	if($order_info['is_tg']){
  		$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set order_status = 4 where id = ".$order_id." and  online_pay=total_price and order_status = 0");
 	}else{
  		$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set order_status = 4 where id = ".$order_id." and  (online_pay+credit_pay+score_money)=total_price and order_status = 0");
 	}
-	
+
   	if($GLOBALS['db']->affected_rows()>0) //订单已成功支付
 	{
  		if(!$order_info['is_tg']){
@@ -1603,7 +1605,7 @@ function pay_order($order_id)
 				}else {
 					$log_score=$order_info['deal_name']."股权转让，支付使用".$order_info['score']."积分,转存入余额".format_price($order_info['score_money']);;
 				}
-				
+
 				modify_account(array("money"=>$order_info['score_money'],"score"=>"-".$order_info['score']),$order_info['user_id'],$log_score,array('money_type'=>20));
 			}
 			if ( $order_info['type']!=6) {
@@ -1620,21 +1622,21 @@ function pay_order($order_id)
 				}else{
 					$log_score=$order_info['deal_name']."股权转让，支付失败，退回".$order_info['score']."积分，扣除余额".format_price($order_info['score_money']);
 				}
-				
+
 				modify_account(array("money"=>"-".$order_info['score_money'],"score"=>$order_info['score']),$order_info['user_id'],$log_score,array('money_type'=>21));
-	 			
+
 	 			return $result;
-	  		} 
+	  		}
 		}
-		 
+
  		//$credit_pay=$order_info['total_price']-$order_info['online_pay'];
 		//$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set credit_pay=".$credit_pay." where id=".$order_info['id']);
-  		
+
  		$order_info['pay_time'] = get_gmtime();
 		if($order_info['type']==1 || $order_info['type']==5){
 			$GLOBALS['db']->query("update ".DB_PREFIX."deal set support_count = support_count + 1,support_amount = support_amount + ".$order_info['deal_price'].",pay_amount = pay_amount + ".$order_info['total_price'].",delivery_fee_amount = delivery_fee_amount + ".$order_info['delivery_fee']." ,share_fee_amount = share_fee_amount + ".$order_info['share_fee']." where id = ".$order_info['deal_id']." and is_effect = 1 and is_delete = 0 and begin_time < ".get_gmtime()." and (pay_end_time > ".get_gmtime()." or pay_end_time = 0)");
 		}elseif($order_info['type']==6){
-			//转让项目是否有效，是否在有效时间内 ,pay_time 
+			//转让项目是否有效，是否在有效时间内 ,pay_time
 			$GLOBALS['db']->query("update ".DB_PREFIX."stock_transfer set support_num = support_num+1  where begin_time < ".$order_info['pay_time']." and  end_time > ".$order_info['pay_time']."  and status=1 and id = ".$order_info['deal_item_id']);
 		}else{
 			$GLOBALS['db']->query("update ".DB_PREFIX."deal set support_count = support_count + ".$order_info['num'].",support_amount = support_amount + ".$order_info['deal_price']."*".$order_info['num'].",pay_amount = pay_amount + ".$order_info['total_price'].",delivery_fee_amount = delivery_fee_amount + ".$order_info['delivery_fee']." ,share_fee_amount = share_fee_amount + ".$order_info['share_fee']." where id = ".$order_info['deal_id']." and is_effect = 1 and is_delete = 0 and begin_time < ".get_gmtime()." and (end_time > ".get_gmtime()." or end_time = 0)");
@@ -1650,21 +1652,21 @@ function pay_order($order_id)
 			$support_log['deal_item_id'] = $order_info['deal_item_id'];
 			$GLOBALS['db']->autoExecute(DB_PREFIX."deal_support_log",$support_log);
 			$support_log_id = intval($GLOBALS['db']->insert_id());
-			
+
 			if( $order_info['type']==6){
 				// 股权转让是否超额  support_count+1
 				$GLOBALS['db']->query("update ".DB_PREFIX."stock_transfer set support_count = support_count + ".$order_info['num']."  where support_count + 1 <= 1  and id = ".$order_info['deal_item_id']);
-				
+
 			}else{
 				$GLOBALS['db']->query("update ".DB_PREFIX."deal_item set support_count = support_count + ".$order_info['num'].",support_amount = support_amount +".$order_info['deal_price']."*".$order_info['num']." where (support_count + 1 <= limit_user or limit_user = 0) and id = ".$order_info['deal_item_id']);
 			}
 			if($GLOBALS['db']->affected_rows()>0||($order_info['type']==1 || $order_info['type']==5 ))
 			{
 				$result['status'] = 3;
-				$order_info['order_status'] = 3;	
-				
-				 
-				
+				$order_info['order_status'] = 3;
+
+
+
  				$deal_info = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."deal where id = ".$order_info['deal_id']." and is_effect = 1 and is_delete = 0");
 				//下单项目成功，准备加入准备队列
 				if($deal_info['is_success'] == 0)
@@ -1683,15 +1685,15 @@ function pay_order($order_id)
 				//更新用户的支持数
 				$GLOBALS['db']->query("update ".DB_PREFIX."user set support_count = support_count + ".$deal_info['num']." where id = ".$order_info['user_id']);
 				//同步deal_log中的deal_info_cache
-				
+
 				$GLOBALS['db']->query("update ".DB_PREFIX."deal_log set deal_info_cache = '' where deal_id = ".$deal_info['id']);
 				$GLOBALS['db']->query("update ".DB_PREFIX."deal set deal_extra_cache = '' where id = ".$deal_info['id']);
 				}
 				if($order_info['type']==1 || $order_info['type']==5){
 					$GLOBALS['db']->query("update ".DB_PREFIX."investment_list set investor_money_status=3 where order_id=".$order_info['id']);
 				}
- 				
-				$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set order_status = ".intval($order_info['order_status']).",pay_time = ".$order_info['pay_time'].",is_refund = ".$order_info['is_refund']." where id = ".$order_info['id']);				
+
+				$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set order_status = ".intval($order_info['order_status']).",pay_time = ".$order_info['pay_time'].",is_refund = ".$order_info['is_refund']." where id = ".$order_info['id']);
 				if($order_info['type']==6){
 					//修改状态
 					//$GLOBALS['db']->query("update ".DB_PREFIX."investment_list set investor_money_status=3 where order_id=".$order_info['id']);
@@ -1699,20 +1701,20 @@ function pay_order($order_id)
 				//同步项目状态
 				syn_deal_status($order_info['deal_id']);
 				syn_deal($order_info['deal_id']);
-				
+
 				//生成抽奖号
 				if($order_info['type'] ==3)
 					insert_lottery_sn($order_info);
-				
-				//发放返利   
+
+				//发放返利
 				if($user['pid'] >0)
 					send_buy_referrals($user,$order_info['id']);//$user_info 会员信息 要传入id,pid,user_name,referral_count
-				
+
 				//发放积分与信用值
 				$score_multiple=floatval(app_conf("BUY_PRESEND_SCORE_MULTIPLE"));
 				$point_multiple=floatval(app_conf("BUY_PRESEND_POINT_MULTIPLE"));
 				$score_point=array("score_multiple"=>$score_multiple,"point_multiple"=>$point_multiple);
-				$score_point=serialize($score_point); 
+				$score_point=serialize($score_point);
 				$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set sp_multiple = '".$score_point."' where id = ".$order_info['id']);
 				if($score_multiple >0)
 				{
@@ -1734,7 +1736,7 @@ function pay_order($order_id)
 					}
 					modify_account(array("point"=>$point),$order_info['user_id'],$log_info);
 				}
-					
+
 			}
 			else
 			{
@@ -1755,7 +1757,7 @@ function pay_order($order_id)
  					$log_score=$order_info['deal_name']."限额已满，退回".$order_info['score']."积分";
 					modify_account(array("score"=>$order_info['score']),$order_info['user_id'],$log_score);
  				}
-				
+
 			}
 		}
 		else
@@ -1770,11 +1772,11 @@ function pay_order($order_id)
 				$log_score=$order_info['deal_name']."限额已满，退回".$order_info['score']."积分";
 				modify_account(array("score"=>$order_info['score']),$order_info['user_id'],$log_score);
 			}
-			
-			
+
+
 		}
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set order_status = ".intval($order_info['order_status']).",pay_time = ".$order_info['pay_time'].",is_refund = ".$order_info['is_refund']." where id = ".$order_info['id']);
-		
+
 	}
 	else
 	{
@@ -1793,14 +1795,14 @@ function syn_deal_status($deal_id)
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal set is_success = 1,success_time = ".get_gmtime()." where id = ".$deal_id." and is_effect=  1 and is_delete = 0 and (support_amount+virtual_price) >= limit_price and begin_time <".get_gmtime()." and (end_time > ".get_gmtime()." or end_time = 0)");
 	}
 	if($GLOBALS['db']->affected_rows()>0)
-	{		
+	{
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set is_success = 1 where deal_id = ".$deal_id);
 		//无私奉献的用户，项目成功后，就默认发送成功回报
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set repay_make_time='".get_gmtime()."',repay_time='".get_gmtime()."',repay_memo='无私奉献' where order_status=3 and is_refund=0 and type=2 ");
 		//项目成功，加入项目成功的待发队列
 		$deal_notify['deal_id'] = $deal_id;
 		$deal_notify['create_time'] = get_gmtime();
-		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_notify",$deal_notify,"INSERT","","SILENT");	
+		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_notify",$deal_notify,"INSERT","","SILENT");
 	}
 }
 //更新会员级别，用户升级上来的用户 没有会员等级
@@ -1833,9 +1835,9 @@ function syn_weibo($data)
 //发送给用户通知
 function send_notify($user_id,$content,$url_route,$url_param)
 {
-	
+
 	$GLOBALS['msg']->manage_msg("notify",$user_id,array('content'=>$content,'url_route'=>$url_route,'url_param'=>$url_param));
-	
+
 	// $notify_user = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."user where id = ".intval($user_id));
  	// $notify = array();
 	// if($notify_user)
@@ -1845,13 +1847,13 @@ function send_notify($user_id,$content,$url_route,$url_param)
 		// $notify['log_time'] = get_gmtime();
 		// $notify['url_route'] = $url_route;
 		// $notify['url_param'] = $url_param;
-// 		
+//
 		// $GLOBALS['db']->autoExecute(DB_PREFIX."user_notify",$notify,"INSERT","","SILENT");
 	// }
-// 	
+//
 }
 
-   
+
 
 //发短信验证码
 function send_verify_sms($mobile,$code,$type="")
@@ -1869,8 +1871,8 @@ function send_tzt_verify_sms($mobile, $code){
 //发邮件验证码
 function send_verify_email($email,$code,$title="")
 {
-	$GLOBALS['msg']->manage_msg('TPL_MAIL_USER_VERIFY',$email,array('code'=>$code,'title'=>$title));	
-	
+	$GLOBALS['msg']->manage_msg('TPL_MAIL_USER_VERIFY',$email,array('code'=>$code,'title'=>$title));
+
 }
 
 //项目成功发送短信、回报短信(所有成功项目的支持人、项目创立者）
@@ -1882,12 +1884,12 @@ function send_pay_success($log_info){
 	$deal_s_user=$GLOBALS['db']->getAll("select *,u.mobile from ".DB_PREFIX."deal d LEFT JOIN ".DB_PREFIX."user u ON u.id = d.user_id where d.is_success='1' and d.is_has_send_success='0' and d.is_delete = 0 ");
 	$tmpl3=$GLOBALS['db']->getRowCached("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_USER_S'");
 	$tmpl_content3 = $tmpl3['content'];
-	
+
 	foreach ($deal_s_user as $k=>$v){
 		if($v['id']){
 		$user_s_msg['user_name']=$v['user_name'];
 		$user_s_msg['deal_name']=$v['name'];
-	
+
 		$GLOBALS['tmpl']->assign("user_s_msg",$user_s_msg);
 		$msg3=$GLOBALS['tmpl']->fetch("str:".$tmpl_content3);
 		$msg_data3['dest']=$v['mobile'];
@@ -1900,7 +1902,7 @@ function send_pay_success($log_info){
 		$msg_data3['user_id'] = $v['user_id'];
 		$msg_data3['is_html'] = $tmpl3['is_html'];
 		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data3); //插入
-	
+
 		}
 	}
  }
@@ -2022,12 +2024,12 @@ function invest_pay_send($invest_id,$order_id=''){
 				$user_info['send_time_ms']=to_date($time,'Y年m月d日 H时i分');
  				$GLOBALS['tmpl']->assign("user",$user_info);
 				$msg = $GLOBALS['tmpl']->fetch("str:".$tmpl_content);
-				
+
 				$msg_data['dest'] = $user_info['email'];
 				$msg_data['send_type'] = 1;
 				$msg_data['title'] = app_conf("SITE_NAME")."付款通知-".$user_info['deal_name'];
 				$msg_data['content'] = addslashes($msg);;
-				$msg_data['send_time'] = 0; 
+				$msg_data['send_time'] = 0;
 				$msg_data['is_send'] = 0;
 				$msg_data['create_time'] = get_gmtime();
 				$msg_data['user_id'] = $user_info['user_id'];
@@ -2039,11 +2041,11 @@ function invest_pay_send($invest_id,$order_id=''){
 		}elseif($status==2&&$user_info){
 			//短信通知
 			if(!empty($user_info['mobile'])){
- 				$tmpl = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name = 'TPL_SMS_INVESTOR_PAY_STATUS'");				
+ 				$tmpl = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name = 'TPL_SMS_INVESTOR_PAY_STATUS'");
 				$tmpl_content = $tmpl['content'];
   				$GLOBALS['tmpl']->assign("user",$user_info);
 				$msg = $GLOBALS['tmpl']->fetch("str:".$tmpl_content);
-				
+
 				$msg_data['dest'] = $user_info['mobile'];
 				$msg_data['send_type'] = 0;
 				$msg_data['title'] =  "短信付款通知-".$user_info['deal_name'];
@@ -2054,14 +2056,14 @@ function invest_pay_send($invest_id,$order_id=''){
  				$msg_data['user_id'] = $user_info['user_id'];
 				$msg_data['is_html'] = $tmpl['is_html'];
 				$GLOBALS['db']->query("update ".DB_PREFIX."investment_list set send_type=1 where id=".$user_info['invest_id']);
-				$re=$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入	
+				$re=$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入
 				return $re;
 			}
 		}
 	}
  }
- 
- 
+
+
  //支付完成的notice_id,根据notice_id获取会员信息，发送给用户 短信或邮件
  function send_paid_info($notice_id){
  	$status=app_conf("INVEST_PAID_SEND_STATUS");
@@ -2084,12 +2086,12 @@ function invest_pay_send($invest_id,$order_id=''){
 				$user_info['send_time_ms']=to_date($time,'Y年m月d日 H时i分');
 				$GLOBALS['tmpl']->assign("user",$user_info);
 				$msg = $GLOBALS['tmpl']->fetch("str:".$tmpl_content);
-				
+
 				$msg_data['dest'] = $user_info['email'];
 				$msg_data['send_type'] = 1;
 				$msg_data['title'] = app_conf("SITE_NAME")."已付款通知";
 				$msg_data['content'] = addslashes($msg);;
-				$msg_data['send_time'] = 0; 
+				$msg_data['send_time'] = 0;
 				$msg_data['is_send'] = 0;
 				$msg_data['create_time'] = get_gmtime();
 				$msg_data['user_id'] = $user_info['user_id'];
@@ -2101,11 +2103,11 @@ function invest_pay_send($invest_id,$order_id=''){
 		}elseif($status==2&&$user_info){
 			//短信通知
 			if(!empty($user_info['mobile'])){
- 				$tmpl = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name = 'TPL_SMS_INVESTOR_PAID_STATUS'");				
+ 				$tmpl = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name = 'TPL_SMS_INVESTOR_PAID_STATUS'");
 				$tmpl_content = $tmpl['content'];
   				$GLOBALS['tmpl']->assign("user",$user_info);
 				$msg = $GLOBALS['tmpl']->fetch("str:".$tmpl_content);
-				
+
 				$msg_data['dest'] = $user_info['mobile'];
 				$msg_data['send_type'] = 0;
 				$msg_data['title'] =  "短信已付款通知";
@@ -2116,7 +2118,7 @@ function invest_pay_send($invest_id,$order_id=''){
  				$msg_data['user_id'] = $user_info['user_id'];
 				$msg_data['is_html'] = $tmpl['is_html'];
 				$GLOBALS['db']->query("update ".DB_PREFIX."payment_notice set paid_send=1 where id=".$notice_id);
-				$re=$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入	
+				$re=$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入
 				return $re;
 			}
 		}
@@ -2204,7 +2206,7 @@ function get_investor($is_investor){
   		foreach($info as $k=>$v){
   			if(!empty($info[$k]['title'])&&!empty($info[$k]['file'])){
  				$result_info[]=$info[$k];
- 			} 
+ 			}
  		}
   	}elseif($type=='stock'){
     		foreach($info as $k=>$v){
@@ -2222,10 +2224,10 @@ function get_investor($is_investor){
   		foreach($info as $k=>$v){
 	   		if(!empty($info[$k]['name'])){
 	 				$result_info[]=$info[$k];
-	 		} 
+	 		}
   		}
   	}elseif($type=='history'||$type=='plan'){
-  	
+
   		foreach($info as $k=>$v){
 	  		if(!empty($v['info']['name'])){
 	  			$info[$k]['info']['income_num']=1;
@@ -2253,17 +2255,17 @@ function get_investor($is_investor){
 		 			}else{
 		 				unset($info[$k]['out']);
 		 			}
-		 			
+
 		 			if( $v['info']['begin_time'] !='' && $v['info']['end_time'] !='' )
-		 			{	
+		 			{
 		 				$begin_time=to_timespan($v['info']['begin_time']);
 		 				$end_time=to_timespan($v['info']['end_time']);
-		 				
+
 		 				if( $end_time < $begin_time )
-		 				{ 
+		 				{
 		 					$result['info']='开始时间要小于结束时间';
 	 						return $result;
-		 					
+
 		 				}
 		 			}
  		 			$result_info[]=$info[$k];
@@ -2272,7 +2274,7 @@ function get_investor($is_investor){
   	}elseif($type=='audit_data'){
     		foreach($info as $k=>$v){
   			if(is_array($v)){
-  				
+
   				$result_info[$k]['status']=intval($old_info[$k]['status']);
 	  			$result_info[$k]['reason']=$old_info[$k]['reason'];
 	  			if(!empty($v['image'])){
@@ -2283,13 +2285,13 @@ function get_investor($is_investor){
   			}else{
   				$result_info[$k]=$v;
   			}
-  			
-  			 
+
+
   		}
-  		
+
    	}
- 	
-  	
+
+
  	return array('status'=>1,'data'=>$result_info);
  }
  /*将会员余额转化为诚意金*/
@@ -2297,7 +2299,7 @@ function get_investor($is_investor){
  	require_once APP_ROOT_PATH."system/libs/user.php";
     $has_money=$GLOBALS['db']->getOne("select sum(amount) from ".DB_PREFIX."money_freeze where platformUserNo=".$user_id." and deal_id=".$deal_id." and status=1 ");
     $need_mortgate = need_mortgate();
-	 
+
     if($need_mortgate==($has_money+$money)){
      	$data = array();
 		$data['requestNo'] = 0;//请求流水号
@@ -2312,13 +2314,13 @@ function get_investor($is_investor){
  		$GLOBALS['db']->autoExecute(DB_PREFIX."money_freeze",$data,'INSERT');
  		if($GLOBALS['db']->insert_id()){
 			modify_account(array('money'=>'-'.$money),$user_id,"项目ID".$deal_id." 冻结诚意金",$param=array());
-			
+
 		}
      	return true;
     }else{
      	return false;
     }
-	   	
+
  }
  function syn_mortgate($user_id){
  	//余额支付诚意金插入用户总的诚意金
@@ -2327,7 +2329,7 @@ function get_investor($is_investor){
 	$data['cy_money'] = $sum_money;
 	$GLOBALS['db']->autoExecute(DB_PREFIX."user",$data,'UPDATE',$where);
  }
- 
+
  /*获取需要缴纳的诚意金金额*/
  function need_mortgate(){
  	$money=user_need_mortgate();
@@ -2352,7 +2354,7 @@ function get_investor($is_investor){
 	 		$GLOBALS['db']->autoExecute(DB_PREFIX."mortgate",$mortgate_info);
 	  	}
     }
-	   	
+
  }
  /*判断用户当前需要的诚意金数量*/
  function user_need_mortgate(){
@@ -2402,7 +2404,7 @@ function get_investor($is_investor){
  			//$data=array('money'=>"-".$money);
  			//add_log($data,$invest['user_id'],"用户违约，ID为".$invest_id."的申请，扣除诚意金$money元");
  		//}
- 	} 
+ 	}
  }
  //更新日志
  function add_log($data,$user_id,$log_msg=''){
@@ -2436,7 +2438,7 @@ function get_investor($is_investor){
  */
  //领投ajax判断
  function  investor_leader_ajax($user_id,$deal_id,$ajax='',$from='web',$info,$type=''){
- 		$invest=$GLOBALS['db']->getRow("SELECT * FROM ".DB_PREFIX."investment_list where user_id=".$user_id." and type=1 and deal_id=".$deal_id);	
+ 		$invest=$GLOBALS['db']->getRow("SELECT * FROM ".DB_PREFIX."investment_list where user_id=".$user_id." and type=1 and deal_id=".$deal_id);
  		//0表示错误，1表示进行投资，2表示申请领头权限，3表示支付诚意金,4 追加投资 5追加资金审核不通过 6申请领头权限不通过 7已经“领投”,无法再跟投
 		//8项目已经结束无法再进行投资 9判断“投资者认证成功”
 		$result=array('status'=>1,'info'=>'','url'=>'','html'=>'');
@@ -2462,7 +2464,7 @@ function get_investor($is_investor){
 			$result['info']="项目已经结束无法投资！";
 			return $result;
 		}
- 		//判断“投资者认证成功” 
+ 		//判断“投资者认证成功”
 		if($info['is_investor']==0){
 			$result['status']=0;
 			$result['info']="您是普通用户,请进行实名认证";
@@ -2473,10 +2475,10 @@ function get_investor($is_investor){
 			}elseif($from=='app'){
 				$result['url']="investor#index";
 			}
-			
+
 			return $result;
 		}else{
-			
+
 			if($info['investor_status']==0){
 				$result['status']=0;
 				$result['info']="实名认证在审核中";
@@ -2502,14 +2504,14 @@ function get_investor($is_investor){
 				$result['info']="已经跟投，无需再进行领投！";
 				return $result;
 			}
- 			$num=$GLOBALS['db']->getOne("SELECT count(*) FROM ".DB_PREFIX."investment_list where user_id!=".$user_id." and status=1 and type=1 and deal_id=".$deal_id);	
+ 			$num=$GLOBALS['db']->getOne("SELECT count(*) FROM ".DB_PREFIX."investment_list where user_id!=".$user_id." and status=1 and type=1 and deal_id=".$deal_id);
 			if($num>0){
 				//领投未审核
 				$result['status']=0;
 				$result['info']="领投用户已经存在,无法申请!";
 				return $result;
-			} 
-			 
+			}
+
 			if(!$invest){
 				$result['status']=0;
 				$result['info']="进行领投申请";
@@ -2526,14 +2528,14 @@ function get_investor($is_investor){
 				}
 				return $result;
 			}
-			 
+
 			if($invest['status']==0){
 				//领投未审核
   				$result['status']=0;
 				$result['info']="您的申请已在审核中!";
 				return $result;
 			}
-			 
+
  			if($invest['status']==1){
 				//判断是否有诚意金
 				//$margator_money=$info['mortgage_money'];
@@ -2541,7 +2543,7 @@ function get_investor($is_investor){
   				if($margator_money>=user_need_mortgate() ){
 					//是否已经支付过了(判断钱)
 					$num=$GLOBALS['db']->getOne("SELECT count(*) from ".DB_PREFIX."investment_list WHERE user_id=".$user_id." AND deal_id=$deal_id AND money!=0 and type=1");
-			
+
 					if($num>0){
 						if($GLOBALS['db']->getOne("SELECT count(*) FROM ".DB_PREFIX."investment_list WHERE user_id=".$user_id." AND money>0 AND (type IN (1)) AND investor_money_status=0 AND deal_id=".$deal_id)>0){
 							$result['status']=1;
@@ -2568,7 +2570,7 @@ function get_investor($is_investor){
 						return $result;
 					}
 				}else{
-					 
+
 					//支付诚意金
 					$result['status']=0;
 					$result['info']="您的诚意金不足，请支付!";
@@ -2610,7 +2612,7 @@ function get_investor($is_investor){
  		$result['info']="请输入正确的目标金额！";
  		return $result;
  	}
- 	
+
  	/*if($is_partner==2){
  		$result['status']=0;
  		$result['info']="请选择愿意担任！";
@@ -2623,12 +2625,12 @@ function get_investor($is_investor){
  	}
  	$data=$GLOBALS['db']->getRow("SELECT * FROM ".DB_PREFIX."investment_list WHERE user_id=".$user_id." AND type=1 AND deal_id=".$deal_id);
  	$result=array('status'=>1,'info'=>'','url'=>'','html'=>'');
- 	
+
  	if($data['id']>0){
  		//原来的钱
  		$investment_money=$data['money']+$money;
  		$investment_num=$data['num']+$num;
- 		
+
  		$deal=$GLOBALS['db']->getRow("select * from  ".DB_PREFIX."deal where id=$deal_id");
  		if($investment_money>$deal['limit_price']){
  			$result['status']=0;
@@ -2640,7 +2642,7 @@ function get_investor($is_investor){
  			$result['info']="无法进行资金添加！";
  			return $result;
  		}
- 	
+
  		if($GLOBALS['db']->query("UPDATE ".DB_PREFIX."investment_list SET money=".$investment_money.",num=".$investment_num.",is_partner=".$is_partner.",create_time=".NOW_TIME." WHERE user_id=".$user_id." AND type=1 AND deal_id=".$deal_id)>0){
  			investor_is_success($deal_id);
  			$result['status']=1;
@@ -2705,7 +2707,7 @@ function get_investor($is_investor){
  	//7:已经申请“领投”，但是未审核   8:已经申请“领投”，并通过  9:已经申请“领投”，但是审核不通过
  	//10:项目已经结束无法投资！ 11投资者认证未通过
  	$result=array('status'=>'','info'=>'','url'=>'','html'=>'');
- 	
+
  	//项目结束出提示“不能再进行投资！”
  	$deal_ifo=$GLOBALS['db']->getRow("SELECT * FROM ".DB_PREFIX."deal WHERE id=".$deal_id);
  	if($deal_ifo['user_id']==$user_id){
@@ -2736,7 +2738,7 @@ function get_investor($is_investor){
  			$result['url']="investor#index";
  		}
   		return $result;
- 	}else{ 		
+ 	}else{
  		if($info['investor_status']==0){
  			$result['status']=0;
  			$result['info']="实名认证在审核中";
@@ -2754,10 +2756,10 @@ function get_investor($is_investor){
  			}
  			return $result;
  		}
- 			
+
   	    $margator_money=$GLOBALS['db']->getOne("select sum(amount) from ".DB_PREFIX."money_freeze where platformUserNo=".$user_id." and deal_id=".$deal_id." and status=1 ");
- 	    
- 		
+
+
  		if($margator_money<user_need_mortgate()){
 	 			//支付诚意金
 	 			$result['status']=0;
@@ -2831,17 +2833,17 @@ function get_investor($is_investor){
 	 			 	return $result;
 	 			}else{
 	 				$result['status']=5;
-	 				$result['info']="您的资金已经无法再次追加！"; 				
+	 				$result['info']="您的资金已经无法再次追加！";
 	 				return $result;
 	 			}
 	 		}
  			//$result['html'] = $GLOBALS['tmpl']->fetch("inc/enquiry_one_money.html");
  		}
- 		
+
  		return $result;
  	}
  }
- 
+
  function investor_enquiry_page($user_id,$deal_id,$enquiry){
  	$deal_ifo=$GLOBALS['db']->getRow("SELECT * FROM ".DB_PREFIX."deal WHERE id=".$deal_id);
  	//total_num剩余投资的份数
@@ -2878,7 +2880,7 @@ function get_investor($is_investor){
  			$result['info']="询价次数已经用完！";
  			return $result;
  		}
- 			
+
  	}elseif($enquiry==0){
  		/*enquiry:0不参与询价无条件接受项目最终估值*/
  		//判断是否可以追加资金
@@ -3041,7 +3043,7 @@ function get_investor($is_investor){
  	$cates=$GLOBALS['db']->getAllCached("SELECT name,id FROM ".DB_PREFIX."deal_cate ORDER BY sort ASC");
  	$row=array();
  	$row=$GLOBALS['db']->getRow("SELECT * from ".DB_PREFIX."investment_list where deal_id=$deal_id and user_id=$user_id and type=1 ");
- 	
+
  	if($row){
  		if($row['status']==1){
  			showSuccess("您的申请已经通过");
@@ -3072,7 +3074,7 @@ function get_investor($is_investor){
  	}
  	return $return;
  }
- 
+
  function investor_save($id,$ajax='',$identify_name,$identify_number,$image1,$image2)
  {
  	if($identify_name==null){
@@ -3111,7 +3113,7 @@ function get_investor($is_investor){
  		return $data;
  	}
   }
- 
+
  function investor_agency_save($id,$ajax='',$identify_business_name,$identify_business_licence,$identify_business_code,$identify_business_tax,$identify_name,$identify_number)
  {
  	if($identify_name==null){
@@ -3161,9 +3163,9 @@ function get_investor($is_investor){
  	}
   }
   function settings_invest_info($from='web',$user_info)
-	{	
-		
-		
+	{
+
+
 		if(!$user_info)
 		{
 			if($from='web')
@@ -3175,10 +3177,10 @@ function get_investor($is_investor){
 				app_redirect(url_wap("user#login"));
 			}elseif ($from=='app')
 			{
-				
+
 			}
 		}
-		 
+
 		$data=$user_info;
 		if($data)
 		{
@@ -3189,7 +3191,7 @@ function get_investor($is_investor){
 					$GLOBALS['tmpl']->assign("user_investment",$data);
 					$GLOBALS['tmpl']->display("settings_invest_info.html");
 				}elseif($from=='app'){
-					
+
 				}
 			}
 			//未申请
@@ -3203,11 +3205,11 @@ function get_investor($is_investor){
 				{
 					app_redirect(url_wap("investor#index"));
 				}elseif($from=='app'){
-					
+
 				}
 			}
 		}
- 		
+
 	}
 	function LOGIN_DES_KEY(){
 		if(!es_session::is_set("DES_KEY")){
@@ -3217,7 +3219,7 @@ function get_investor($is_investor){
 		return es_session::get("DES_KEY");
 	}
 	function set_nav_top($module,$action='index',$id=0){
-		
+
 		if($module=='article_cate'&&$action=='index'&&$id==0){
 			return array("top"=>array('name'=>'首页','url'=>url('index')),'list'=>array(name=>'文章列表','url'=>url('article_cate')));
 		}elseif($module=='article_cate'&&$action=='index'&&$id>0){
@@ -3238,7 +3240,7 @@ function get_investor($is_investor){
 			return array("top"=>array('name'=>'首页','url'=>url('index')),'list'=>array(name=>'文章列表','url'=>url('article_cate')),'help'=>array(name=>'帮助列表','url'=>url('help#show')));
 		}
 	}
-	
+
 	function get_deal_cate_list($type){
 		$info=array();
 		//广告轮播
@@ -3249,11 +3251,11 @@ function get_investor($is_investor){
 			//股权众筹
 			$image_list_condition=" and type=2";
 		}
-		
-		
+
+
 		$image_list=$GLOBALS['db']->getAll("select * from ".DB_PREFIX."index_image where 1=1 ".$image_list_condition);
  		$info['image_list']=$image_list;
- 		
+
  		$limit='0,3';
  		$condition=" type=".$type;
  		//热门项目
@@ -3272,7 +3274,7 @@ function get_investor($is_investor){
  		$preheat_limit='0,2';
  		$preheat_condition=$condition." and ".NOW_TIME." - d.begin_time < ".(24*3600)." and ".NOW_TIME." - d.begin_time <  0 ";
   		//$preheat_condition=$condition." ";
-  		
+
   		$preheat_list=get_deal_list($preheat_limit,$preheat_condition,'','deal_cate_preheat');
    		$info['preheat_list']=$preheat_list['list'];
  		//项目动态
@@ -3281,7 +3283,7 @@ function get_investor($is_investor){
  		$deal_log_order_by=" l.create_time desc";
  		$log_list=deal_log_list($deal_log_limit,$deal_log_condition,$deal_log_order_by);
   		$info['log_list']=$log_list;
-  		
+
   		return $info;
 	}
 	//获取提现银行
@@ -3306,7 +3308,7 @@ function get_investor($is_investor){
 				}
 			}
 		}
-				
+
 		return $bank_list;
 	}
 	//检测手机是否可以绑定
@@ -3316,13 +3318,13 @@ function get_investor($is_investor){
 		}
 		if(!check_mobile($mobile))
 		{
-			showErr("请填写正确的手机号码",$ajax,"");	
+			showErr("请填写正确的手机号码",$ajax,"");
 		}
 		if(strlen($mobile)>11){
 			showErr("手机号码长度不能超过11位",$ajax,"");
 		}
 		$condition=" mobile='$mobile'";
-		 
+
 		$num=$GLOBALS['db']->getOne("select count(*) from  ".DB_PREFIX."user where $condition");
 		if($num>0){
 			showErr("手机已存在,请重新输入",$ajax,"");
@@ -3335,11 +3337,11 @@ function get_investor($is_investor){
 		}
 		if(!check_email($email))
 		{
-			showErr("请填写正确的邮箱",$ajax,"");	
+			showErr("请填写正确的邮箱",$ajax,"");
 		}
-		 
+
 		$condition=" email='$email'";
-		 
+
 		$num=$GLOBALS['db']->getOne("select count(*) from  ".DB_PREFIX."user where $condition");
 		if($num>0){
 			showErr("邮箱已存在,请重新输入",$ajax,"");
@@ -3359,49 +3361,49 @@ function isCreditNo($vStr)
         '50','51','52','53','54','61','62',
         '63','64','65','71','81','82','91'
     );
- 
+
     if (!preg_match('/^([\d]{17}[xX\d]|[\d]{15})$/', $vStr)) return false;
- 
+
     if (!in_array(substr($vStr, 0, 2), $vCity)) return false;
- 
+
     $vStr = preg_replace('/[xX]$/i', 'a', $vStr);
     $vLength = strlen($vStr);
- 
+
     if ($vLength == 18)
     {
         $vBirthday = substr($vStr, 6, 4) . '-' . substr($vStr, 10, 2) . '-' . substr($vStr, 12, 2);
     } else {
         $vBirthday = '19' . substr($vStr, 6, 2) . '-' . substr($vStr, 8, 2) . '-' . substr($vStr, 10, 2);
     }
- 
+
     if (date('Y-m-d', strtotime($vBirthday)) != $vBirthday) return false;
     if ($vLength == 18)
     {
         $vSum = 0;
- 
+
         for ($i = 17 ; $i >= 0 ; $i--)
         {
             $vSubStr = substr($vStr, 17 - $i, 1);
             $vSum += (pow(2, $i) % 11) * (($vSubStr == 'a') ? 10 : intval($vSubStr , 11));
         }
- 
+
         if($vSum % 11 != 1) return false;
     }
- 
+
     return true;
 }
 
 function get_carray_info($user_bank_id){
 	$bank_info=$GLOBALS['db']->getRow("select * from  ".DB_PREFIX."user_bank where id=$user_bank_id");
 	if(empty($bank_info)){
-		
-		return "开户名:".$GLOBALS['user_info']['ex_real_name']." ".$bank_info['ex_account_bank']." 卡号:".$bank_info['ex_account_info'];		
-		
+
+		return "开户名:".$GLOBALS['user_info']['ex_real_name']." ".$bank_info['ex_account_bank']." 卡号:".$bank_info['ex_account_info'];
+
 	}else{
 		if($bank_info['type']==1){
 			return "开户名:".$bank_info['real_name']." ".$bank_info['bank_name']." 卡号:".$bank_info['bankcard']." 开户地点:".$bank_info['region_lv2'].$bank_info['region_lv3'].$bank_info['bankzone'].'(易宝快捷)';
-		}else{			
-			return "开户名:".$bank_info['real_name']." ".$bank_info['bank_name']." 卡号:".$bank_info['bankcard']." 开户地点:".$bank_info['region_lv2'].$bank_info['region_lv3'].$bank_info['bankzone'];			
+		}else{
+			return "开户名:".$bank_info['real_name']." ".$bank_info['bank_name']." 卡号:".$bank_info['bankcard']." 开户地点:".$bank_info['region_lv2'].$bank_info['region_lv3'].$bank_info['bankzone'];
 		}
 	}
 }
@@ -3414,9 +3416,9 @@ function set_source_url(){
  	 		if($url['host']!=$_SERVER['HTTP_HOST']){
  	 			es_session::set("source_url",$url['host']);
  	 		}
- 	 		
+
  	 	}
-	 	
+
 	 }
 }
 /**
@@ -3424,7 +3426,7 @@ function set_source_url(){
  * @return string
  */
 function getCollName(){
-	
+
 	return $GLOBALS['db']->getOne("select class_name from ".DB_PREFIX."collocation where is_effect = 1 limit 1");
 	//if(intval(app_conf("OPEN_IPS"))==1){
 	//	return 'Ips';
@@ -3444,7 +3446,7 @@ function get_domain()
 {
 	/* 协议 */
 	$protocol = get_http();
-	
+
 	if(app_conf("SITE_DOMAIN")!="")
 	{
 		 return $protocol.app_conf("SITE_DOMAIN");
@@ -3524,12 +3526,12 @@ function send_deal_success(){
 	$deal_s_user=$GLOBALS['db']->getAll("select d.*,u.mobile from ".DB_PREFIX."deal d LEFT JOIN ".DB_PREFIX."user u ON u.id = d.user_id where d.is_success='1' and d.is_has_send_success='0' and d.is_delete = 0 ");
 	$tmpl3=$GLOBALS['db']->getRowCached("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_USER_S'");
 	$tmpl_content3 = $tmpl3['content'];
-	
+
 	foreach ($deal_s_user as $k=>$v){
 		if($v['id']){
 		$user_s_msg['user_name']=$v['user_name'];
 		$user_s_msg['deal_name']=$v['name'];
-	
+
 		$GLOBALS['tmpl']->assign("user_s_msg",$user_s_msg);
 		$msg3=$GLOBALS['tmpl']->fetch("str:".$tmpl_content3);
 		$msg_data3['dest']=$v['mobile'];
@@ -3542,17 +3544,17 @@ function send_deal_success(){
 		$msg_data3['user_id'] = $v['user_id'];
 		$msg_data3['is_html'] = $tmpl3['is_html'];
 		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data3); //插入
-	
+
 		$GLOBALS['db']->query("UPDATE ".DB_PREFIX."deal SET is_has_send_success='1' WHERE id = ".$v['id']);
 		}
 	}
-	
+
 	$success_deal_user=$GLOBALS['db']->getAll("SELECT dlo.* FROM ".DB_PREFIX."deal_order dlo LEFT JOIN ".DB_PREFIX."deal d ON d.id= dlo.deal_id WHERE d.is_success='1' and d.is_has_send_success='0' and d.is_delete = 0 AND dlo.order_status='3' AND dlo.is_success='1' AND dlo.is_has_send_success=0 ");
 	if($success_deal_user){
 		//项目成功支持者
 		$tmpl=$GLOBALS['db']->getRowCached("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_DEAL_SUCCESS'");
 		$tmpl_content = $tmpl['content'];
-		
+
 		foreach ($success_deal_user as $k=>$v){
 			if($v['id']){
 			$success_user_info['user_name'] = $v['user_name'];
@@ -3570,12 +3572,12 @@ function send_deal_success(){
 			$msg_data['user_id'] = $v['user_id'];
 			$msg_data['is_html'] = $tmpl['is_html'];
 			$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入
-			
+
 			$GLOBALS['db']->query("UPDATE ".DB_PREFIX."deal_order SET is_has_send_success='1' WHERE id = ".$v['id']);
 			}
 		}
 	}
-	
+
 }
 
 
@@ -3586,7 +3588,7 @@ function send_deal_fail(){
 	}
 	//项目失败发起者短信
 	$deal_f_user=$GLOBALS['db']->getAll("select d.*,u.mobile from ".DB_PREFIX."deal d LEFT JOIN ".DB_PREFIX."user u ON u.id = d.user_id where d.is_success='0' and d.is_has_send_success='0' and d.is_delete = 0 and d.support_amount < (d.limit_price-(select sum(virtual_person*price) FROM ".DB_PREFIX."deal_item where deal_id=d.id )) and d.end_time < ".NOW_TIME);
-	
+
 	$tmpl2=$GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_USER_F'");
 	$tmpl_content2 = $tmpl2['content'];
 	foreach ($deal_f_user as $k=>$v){
@@ -3606,7 +3608,7 @@ function send_deal_fail(){
 		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data2); //插入
 		$GLOBALS['db']->query("UPDATE ".DB_PREFIX."deal SET is_has_send_success='1' WHERE id = ".$v['id']);
  	}
-	
+
 	//支持人
 	$tmpl=$GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_DEAL_FAIL'");
 	$tmpl_content = $tmpl['content'];
@@ -3628,7 +3630,7 @@ function send_deal_fail(){
 		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入
 		$GLOBALS['db']->query("UPDATE ".DB_PREFIX."deal_order SET is_has_send_success='1' WHERE id = ".$v['id']);
 	}
-	
+
 }
 
 //注册验证成功发送短信
@@ -3659,7 +3661,7 @@ function send_register_success($user_id=0,$user_info=array()){
 		$msg_data['is_html'] = $tmpl['is_html'];
 		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入
 	}
-	
+
 }
 
 
@@ -3688,20 +3690,20 @@ function syn_to_remote_image_server($url)
 			$file = $pathinfo['basename'];
 			$dir = $pathinfo['dirname'];
 			$dir = str_replace("./public/", "public/", $dir);
-			
+
 			require_once APP_ROOT_PATH."system/alioss/sdk.class.php";
-			$oss_sdk_service = new ALIOSS();			
+			$oss_sdk_service = new ALIOSS();
 			//设置是否打开curl调试模式
 			$oss_sdk_service->set_debug_mode(FALSE);
-			
+
 			$bucket = $GLOBALS['distribution_cfg']['OSS_BUCKET_NAME'];
 			$object = $dir."/".$file;
 			$file_path = APP_ROOT_PATH.$dir."/".$file;
-			
+
 			$oss_sdk_service->upload_file_by_file($bucket,$object,$file_path);
 		}
 	}
-	
+
 }
 function format_image_path($out)
 {
@@ -3717,7 +3719,7 @@ function format_image_path($out)
 	$out = str_replace(APP_ROOT."./public/",$domain."/public/",$out);
 	$out = str_replace("./public/",$domain."/public/",$out);
 	return $out;
-	
+
 }
 
 function replace_public($str){
@@ -3732,7 +3734,7 @@ function replace_public($str){
     }
 
     return str_replace($domain."/public/","./public/",$str);
-    
+
 }
 /**
  * 同步脚本样式缓存 $url:'public/runtime/statics/biz/'.$url.'.css';
@@ -3758,24 +3760,24 @@ function syn_to_remote_file_server($url)
 			$pathinfo = pathinfo($url);
 			$file = $pathinfo['basename'];
 			$dir = $pathinfo['dirname'];
-				
+
 			require_once APP_ROOT_PATH."system/alioss/sdk.class.php";
 			$oss_sdk_service = new ALIOSS();
 			//设置是否打开curl调试模式
 			$oss_sdk_service->set_debug_mode(FALSE);
-				
+
 			$bucket = $GLOBALS['distribution_cfg']['OSS_BUCKET_NAME'];
 			$object = $dir."/".$file;
 			$file_path = APP_ROOT_PATH.$dir."/".$file;
-				
+
 			$oss_sdk_service->upload_file_by_file($bucket,$object,$file_path);
 		}
 	}
-	
+
 }
-function isWeixin(){ 
+function isWeixin(){
     $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
-    $is_weixin = strpos($agent, 'micromessenger') ? true : false ;   
+    $is_weixin = strpos($agent, 'micromessenger') ? true : false ;
     if($is_weixin){
         return true;
     }else{
@@ -3810,7 +3812,7 @@ function getCarryFee($money,$user_info){
 	if($user_info['vip_id'] > 0 && $user_info['vip_state'] == 1){
 		$vip_id = $user_info['vip_id'];
 	}
-		
+
 	//手续费
 	$fee_config = load_auto_cache("user_carry_config",array("vip_id"=>$vip_id));
 	//如果手续费大于最大的配置那么取这个手续费
@@ -3826,11 +3828,11 @@ function getCarryFee($money,$user_info){
 			}
 		}
 	}
-		
+
 	if($feel_type == 1){
 		$fee = $money * $fee * 0.01;
 	}
-	
+
 	return $fee;
 }
 
@@ -3866,7 +3868,7 @@ function is_tg($status=false){
 		}else{
 			return true;
 		}
-		
+
 	}else{
 		return false;
 	}
@@ -3891,7 +3893,7 @@ function is_user_investor(){
 }
 //显示成功
 function showIpsInfo($msg,$jump='')
-{		
+{
 	$GLOBALS['tmpl']->assign('msg',$msg);
 	$GLOBALS['tmpl']->assign('jump',$jump);
 	$GLOBALS['tmpl']->display("ips_show.html");
@@ -3902,7 +3904,7 @@ function showIpsInfo($msg,$jump='')
  * 获得用户余额
  * @param int $user_id
  * @param int $user_type
- * @return 
+ * @return
  * 	 * 			pMerCode 6 “平台”账号 否 由IPS颁发的商户号
 				pErrCode 4 返回状态 否 0000成功； 9999失败；
 				pErrMsg 100 返回信息 否 状态0000：成功 除此乊外：反馈实际原因
@@ -3934,7 +3936,7 @@ function return_deal_load_data($data,$user_info,$deal){
 		$formatdata['pContractNo'] = $data["pContractNo"];
 	if(isset($data['pP2PBillNo']))
 		$formatdata['pP2PBillNo'] = $data['pP2PBillNo'];
-		
+
 	$formatdata['user_id'] = $user_info['id'];
 	$formatdata['user_name'] = $user_info['user_name'];
 	$formatdata['deal_id'] = $data['deal_id'];
@@ -3943,19 +3945,19 @@ function return_deal_load_data($data,$user_info,$deal){
 	$formatdata['create_date'] = to_date(TIME_UTC);
 	$formatdata['is_auto'] = intval($data['is_auto']);
 	$formatdata['rebate_money'] = $formatdata['money'] * floatval(trim($deal['user_bid_rebate'])) * 0.01;
-	
+
 	$vip_state = $user_info['vip_state'];
 	$income_value = "";
-	if($vip_state==1){	
+	if($vip_state==1){
 		$settinginfo= $GLOBALS['db']->getRow("SELECT * FROM ".DB_PREFIX."vip_setting WHERE vip_id='".$user_info['vip_id']."' ");
-		
+
 		$deal['user_bid_score_fee'] = $settinginfo['multiple'];
-		
+
 		$jilu=rand(1,100);
 		$income_type = 0;
-		
+
 		if($jilu<=$settinginfo['probability']){
-			
+
 			//随机奖励类型
 			$rand_gift = array();
 			//奖励红包
@@ -3970,12 +3972,12 @@ function return_deal_load_data($data,$user_info,$deal){
 			if($settinginfo['integral'] > 0){
 				$rand_gift[3] = $settinginfo['integral'];
 			}
-			
+
 			//奖励礼品
 			if($settinginfo['gift'] !=""){
 				$rand_gift[4] = $settinginfo['gift'];
 			}
-			
+
 			if(count($rand_gift)){
 				$income_type =  array_rand($rand_gift);
 				$retrun_gift = $rand_gift[$income_type];
@@ -3996,7 +3998,7 @@ function return_deal_load_data($data,$user_info,$deal){
 							$k= array_rand($ids);
 							$income_value = $ids[$k];
 						break;
-					default : 
+					default :
 						$income_value="";
 						break;
 				}
@@ -4004,16 +4006,16 @@ function return_deal_load_data($data,$user_info,$deal){
 			else{
 				$income_value="";
 			}
-			
+
 		}
 		$formatdata['is_winning'] = $income_value== "" ? 0 : 1;
 		$formatdata['income_type'] = $income_type;
 		$formatdata['income_value'] = $income_value;
 	}
-	
+
 	$formatdata['bid_score'] = $formatdata['money'] * floatval(trim($deal['user_bid_score_fee'])) * 0.01;
-	
-	
+
+
 	return $formatdata;
 }
 /**
@@ -4023,7 +4025,7 @@ function add_referrals($referrals_data,$is_return=1){
 	$add_data=array();
 	$referrals_data['user_id']=intval($referrals_data['user_id']);
 	$referrals_data['rel_user_id']=intval($referrals_data['rel_user_id']);
-	
+
 	if($referrals_data['user_id'] >0&&$referrals_data['user_name'] =='')
 		$referrals_data['user_name']=$GLOBALS['db']->getOne("select user_name from ".DB_PREFIX."user where id= ".$referrals_data['user_id']);
 	if($referrals_data['rel_user_id'] >0&&$referrals_data['rel_user_name'] =='')
@@ -4048,7 +4050,7 @@ function add_referrals($referrals_data,$is_return=1){
  * array $user_info 会员信息 要传入id,pid,user_name
  */
 function send_referrals($user_info)
-{	
+{
 	if(intval(app_conf("INVITE_REFERRALS")) >0)
 	{
 			$referral_ip_limit=app_conf("REFERRAL_IP_LIMI");//返利的IP限制
@@ -4066,18 +4068,18 @@ function send_referrals($user_info)
 				$referrals_data['type']=0;//0：注册奖励,1：购买奖励
 				$insert_referrals_id=add_referrals($referrals_data,1);
 				$re=modify_account(array('score'=>$referrals_data['score'],'point'=>$referrals_data['score']),$user_info['pid'],$log_msg='邀请会员'.$user_info['user_name']."注册成功，所得奖励",$param=array());
-				
+
 				if($re)
-				{	
+				{
 					$GLOBALS['db']->query("update ".DB_PREFIX."referrals set pay_time = ".NOW_TIME." where id =".intval($insert_referrals_id));//更新返利发放时间
 					$GLOBALS['db']->query("update ".DB_PREFIX."user set is_send_referrals = 2 where id =".intval($user_info['id']));//更新返利已发放给推荐人
-					
+
 					send_notify($user_info['pid'],"您邀请会员".$user_info['user_name']."注册成功,奖励".$referrals_data['score']."积分","account#score");//通知会员获得邀请返利
 					send_notify($user_info['pid'],"您邀请会员".$user_info['user_name']."注册成功,信用值增加".$referrals_data['score'],"account#point");//通知会员经验值增加
 				}
 			}
 	}
-	
+
 }
 /**
  *发放购买返利
@@ -4086,9 +4088,9 @@ function send_referrals($user_info)
  * $order_id 订单id
  * */
 function send_buy_referrals($user_info,$order_id)
-{	
+{
 	$referrals_limit=intval(app_conf("REFERRAL_LIMIT"));
-	
+
 	if(intval(app_conf("BUY_INVITE_REFERRALS")) >0 && ( ($user_info['referral_count'] < $referrals_limit && $referrals_limit >0) || $referrals_limit<=0 ) )
 	{
 			$referral_ip_limit=app_conf("REFERRAL_IP_LIMI");//返利的IP限制
@@ -4105,20 +4107,20 @@ function send_buy_referrals($user_info,$order_id)
 				$referrals_data['score']=intval(app_conf("BUY_INVITE_REFERRALS"));
 				$referrals_data['order_id']=intval($order_id);
 				$referrals_data['type']=1;//0：注册奖励,1：购买奖励
-				
+
 				$insert_referrals_id=add_referrals($referrals_data,1);//创建返利
 				//更新会员购买返利次数
 				$GLOBALS['db']->query("update ".DB_PREFIX."user set referral_count = referral_count +1 where id =".intval($user_info['id']));
 				$re=modify_account(array('score'=>$referrals_data['score'],'point'=>$referrals_data['score']),$user_info['pid'],$log_msg='邀请会员'.$user_info['user_name']."订单支付成功，所得奖励",$param=array());
 				if($re)
-				{	
+				{
 					$GLOBALS['db']->query("update ".DB_PREFIX."referrals set pay_time = ".NOW_TIME." where id =".intval($insert_referrals_id));//更新返利发放时间
 					send_notify($user_info['pid'],"您邀请会员".$user_info['user_name']."订单支付成功,奖励".$referrals_data['score']."积分","account#score");//通知会员获得邀请返利
 					send_notify($user_info['pid'],"您邀请会员".$user_info['user_name']."订单支付成功,信用值增加".$referrals_data['score'],"account#point");//通知会员经验值增加
 				}
 			}
 	}
-	
+
 }
 /**
  *更新会员等
@@ -4131,16 +4133,16 @@ function user_leverl_syn($user_data)
 	if($user_current_level['point']<$user_level['point'])
 	{
 		$user_data['user_level'] = intval($user_level['id']);
-		$GLOBALS['db']->query("update ".DB_PREFIX."user set user_level = ".$user_data['user_level']." where id = ".$user_data['id']);					
-		$pm_content = "恭喜您，您已经成为".$user_level['name']."等级的会员！";	
+		$GLOBALS['db']->query("update ".DB_PREFIX."user set user_level = ".$user_data['user_level']." where id = ".$user_data['id']);
+		$pm_content = "恭喜您，您已经成为".$user_level['name']."等级的会员！";
 		send_notify($user_data['id'], $pm_content, "account#point");
 	}
-	
+
 	if($user_current_level['point']>$user_level['point'])
 	{
 		$user_data['user_level'] = intval($user_level['id']);
 		$GLOBALS['db']->query("update ".DB_PREFIX."user set user_level = ".$user_data['user_level']." where id = ".$user_data['id']);
-		$pm_content = "很报歉，您的会员等级已经降为".$user_level['name']."！";	
+		$pm_content = "很报歉，您的会员等级已经降为".$user_level['name']."！";
 		send_notify($user_data['id'], $pm_content, "account#point");
 	}
 }
@@ -4193,7 +4195,7 @@ function score_to_money($score)
 		$score_array['score_money']=0;
 		$score_array['score']=0;
 	}
-	
+
 	return $score_array;
 }
 
@@ -4201,9 +4203,9 @@ function score_to_money($score)
  * 	作用：将xml转为array
  */
 function xmlToArray($xml)
-{		
-    //将XML转为array        
-    $array_data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);		
+{
+    //将XML转为array
+    $array_data = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
 	return $array_data;
 }
 /**
@@ -4216,14 +4218,14 @@ function xmlToArray($xml)
         {
         	 if (is_numeric($val))
         	 {
-        	 	$xml.="<".$key.">".$val."</".$key.">"; 
+        	 	$xml.="<".$key.">".$val."</".$key.">";
 
         	 }
         	 else
-        	 	$xml.="<".$key."><![CDATA[".$val."]]></".$key.">";  
+        	 	$xml.="<".$key."><![CDATA[".$val."]]></".$key.">";
         }
         $xml.="</xml>";
-        return $xml; 
+        return $xml;
     }
  /*
   * $url 文件地址
@@ -4232,33 +4234,33 @@ function xmlToArray($xml)
   */
   function get_qrcode_png($url,$qrcode_name,$qrcode_dir_logo){
   		require_once APP_ROOT_PATH.'system/utils/phpqrcode.php';
-  		$value = $url; //二维码内容   
-		$errorCorrectionLevel = 'L';//容错级别   
-		$matrixPointSize = 6;//生成图片大小   
-		//生成二维码图片   
-		QRcode::png($value, $qrcode_name, $errorCorrectionLevel, $matrixPointSize, 2);   
-		$logo = app_conf("SITE_LOGO");//准备好的logo图片   
-		$QR = $qrcode_name;//已经生成的原始二维码图   
-		if ($logo !== FALSE) {   
-		    $QR = imagecreatefromstring(file_get_contents($QR));   
-		    $logo = imagecreatefromstring(file_get_contents($logo));   
-		    $QR_width = imagesx($QR);//二维码图片宽度   
-		    $QR_height = imagesy($QR);//二维码图片高度   
-		    $logo_width = imagesx($logo);//logo图片宽度   
-		    $logo_height = imagesy($logo);//logo图片高度   
-		    $logo_qr_width = $QR_width / 5;   
-		    $scale = $logo_width/$logo_qr_width;   
-		    $logo_qr_height = $logo_height/$scale;   
-		    $from_width = ($QR_width - $logo_qr_width) / 2;   
-		    //重新组合图片并调整大小   
-		    imagecopyresampled($QR, $logo, $from_width, $from_width, 0, 0, $logo_qr_width,   
-		    $logo_qr_height, $logo_width, $logo_height);   
-		}   
-		//输出图片   
-		imagepng($QR, $qrcode_dir_logo);   
+  		$value = $url; //二维码内容
+		$errorCorrectionLevel = 'L';//容错级别
+		$matrixPointSize = 6;//生成图片大小
+		//生成二维码图片
+		QRcode::png($value, $qrcode_name, $errorCorrectionLevel, $matrixPointSize, 2);
+		$logo = app_conf("SITE_LOGO");//准备好的logo图片
+		$QR = $qrcode_name;//已经生成的原始二维码图
+		if ($logo !== FALSE) {
+		    $QR = imagecreatefromstring(file_get_contents($QR));
+		    $logo = imagecreatefromstring(file_get_contents($logo));
+		    $QR_width = imagesx($QR);//二维码图片宽度
+		    $QR_height = imagesy($QR);//二维码图片高度
+		    $logo_width = imagesx($logo);//logo图片宽度
+		    $logo_height = imagesy($logo);//logo图片高度
+		    $logo_qr_width = $QR_width / 5;
+		    $scale = $logo_width/$logo_qr_width;
+		    $logo_qr_height = $logo_height/$scale;
+		    $from_width = ($QR_width - $logo_qr_width) / 2;
+		    //重新组合图片并调整大小
+		    imagecopyresampled($QR, $logo, $from_width, $from_width, 0, 0, $logo_qr_width,
+		    $logo_qr_height, $logo_width, $logo_height);
+		}
+		//输出图片
+		imagepng($QR, $qrcode_dir_logo);
    }
    /*
-    * 
+    *
     */
     function check_tg($is_wap=0){
     	$is_tg=$GLOBALS['is_tg'];
@@ -4288,7 +4290,7 @@ function xmlToArray($xml)
 		}
     }
     /*
-     * 
+     *
      */
      function deal_admin_nav($navs){
      	switch(INVEST_TYPE){
@@ -4330,7 +4332,7 @@ function xmlToArray($xml)
 		return $navs;
 	}
 
-    function  log_result($word) 
+    function  log_result($word)
 	{
 		$file = "./public/notify_url.log";;
 	    $fp = fopen($file,"a");
@@ -4339,9 +4341,9 @@ function xmlToArray($xml)
 	    flock($fp, LOCK_UN);
 	    fclose($fp);
 	}
-	function  log_result_notify($word) 
+	function  log_result_notify($word)
 	{
-	 
+
 		$file = APP_ROOT_PATH."/public/msg_url.log";;
  	    $fp = fopen($file,"a");
 	    flock($fp, LOCK_EX) ;
@@ -4391,7 +4393,7 @@ function buildPage($type,$args,$total_count,$page = 1,$page_size = 0,$url='',$of
 				$page_url = u($type,$args);
 			}else{
 				$page_url = $type;
-				
+
 			}
 		}else{
 			$page_url = 'javascript:;';
@@ -4464,7 +4466,7 @@ function parse_url_tag($str)
 	{
 		return $GLOBALS[$key];
 	}
-	
+
 	$url = load_dynamic_cache($key);
 	if($url!==false)
 	{
@@ -4495,7 +4497,7 @@ function parse_url_tag_wap($str)
 	{
 		return $GLOBALS[$key];
 	}
-	
+
 	$url = load_dynamic_cache($key);
 	if($url!==false)
 	{
@@ -4537,7 +4539,7 @@ function save_log_common($money,$user_id,$log_msg='',$param=array()){
 				$log_info['money'] = floatval($money);
 				$log_info['user_id'] = $user_id;
 				$GLOBALS['db']->autoExecute(DB_PREFIX."user_log",$log_info);
-				
+
 			}
 			return true;
  	}
@@ -4596,7 +4598,8 @@ function get_user_avatar($id,$type,$head_img='')
 		}
 	 	else{
 	 		$num=$id%10;
-	 		return APP_ROOT."/public/avatar/default/noavatar_".$num.".JPG";
+	 		// 2017/06/24 添加项目域名
+	 		return API_DOMAIN.APP_ROOT."/public/avatar/default/noavatar_".$num.".JPG";
 	 	}
 	}
  }
@@ -4616,17 +4619,17 @@ function get_user_avatar_root($id,$type,$head_img='')
 		$dir2 = substr($uid, 3, 2);
 		$dir3 = substr($uid, 5, 2);
 		$path = $dir1.'/'.$dir2.'/'.$dir3;
-					
-		$id = str_pad($id, 2, "0", STR_PAD_LEFT); 
+
+		$id = str_pad($id, 2, "0", STR_PAD_LEFT);
 		$id = substr($id,-2);
 		$avatar_file = get_domain().REAL_APP_ROOT."/public/avatar/".$path."/".$id."virtual_avatar_".$type.".jpg";
 		$avatar_check_file = APP_ROOT_PATH."/public/avatar/".$path."/".$id."virtual_avatar_".$type.".jpg";
-	 	if(file_exists($avatar_check_file))	
+	 	if(file_exists($avatar_check_file))
 		return $avatar_file;
 		else
 		return get_domain().REAL_APP_ROOT."/public/avatar/noavatar_".$type.".gif";
 	}
-	
+
  }
 
 
@@ -4639,19 +4642,19 @@ function show_avatar($u_id,$type="middle",$head_img='')
 	}
 	else
 	{
-		$avatar_key = md5("USER_AVATAR_".$u_id); 
-		$avatar_data = $GLOBALS['dynamic_avatar_cache'][$avatar_key];// 当前用户所有头像的动态缓存			
+		$avatar_key = md5("USER_AVATAR_".$u_id);
+		$avatar_data = $GLOBALS['dynamic_avatar_cache'][$avatar_key];// 当前用户所有头像的动态缓存
 		if(!isset($avatar_data)||!isset($avatar_data[$key]))
 		{
-			$avatar_file = get_user_avatar($u_id,$type,$head_img);	
+			$avatar_file = get_user_avatar($u_id,$type,$head_img);
 			$avatar_str = "<a href='".url("home",array("id"=>$u_id))."' style='text-align:center; display:inline-block;'>".
 				   "<img src='".$avatar_file."'  />".
-				   "</a>"; 			
+				   "</a>";
 			$avatar_data[$key] = $avatar_str;
 			if(count($GLOBALS['dynamic_avatar_cache'])<500) //保存500个用户头像缓存
 			{
 				$GLOBALS['dynamic_avatar_cache'][$avatar_key] = $avatar_data;
-			}			
+			}
 		}
 		else
 		{
@@ -4726,7 +4729,7 @@ function show_empty_avatar($u_id,$type="middle",$head_img)
 
 function update_avatar($u_id)
 {
-	$avatar_key = md5("USER_AVATAR_".$u_id); 
+	$avatar_key = md5("USER_AVATAR_".$u_id);
 	unset($GLOBALS['dynamic_avatar_cache'][$avatar_key]);
 	$GLOBALS['cache']->set_dir(APP_ROOT_PATH."public/runtime/data/avatar_cache/");
 	$GLOBALS['cache']->set("AVATAR_DYNAMIC_CACHE",$GLOBALS['dynamic_avatar_cache']); //头像的动态缓存
@@ -4774,13 +4777,13 @@ function get_muser_avatar($id,$type,$head_img='')
 		$dir2 = substr($uid, 3, 2);
 		$dir3 = substr($uid, 5, 2);
 		$path = $dir1.'/'.$dir2.'/'.$dir3;
-					
-		$id = str_pad($id, 2, "0", STR_PAD_LEFT); 
+
+		$id = str_pad($id, 2, "0", STR_PAD_LEFT);
 		$id = substr($id,-2);
 		$avatar_file = "./public/avatar/".$path."/".$id."virtual_avatar_".$type.".jpg";
 		$avatar_check_file = APP_ROOT_PATH."public/avatar/".$path."/".$id."virtual_avatar_".$type.".jpg";
-	
-		if(file_exists($avatar_check_file))	
+
+		if(file_exists($avatar_check_file))
 		return $avatar_file;
 		else
 		return "./public/avatar/noavatar_".$type.".gif";
@@ -4817,10 +4820,10 @@ function microtime_format($utc_time,  $format = 'H:i:s.x')
    if (empty ( $utc_time )) {
 		return '';
 	}
-	
+
    $timezone = intval(app_conf('TIME_ZONE'));
    $time = $utc_time + $timezone * 3600;
-   
+
    list($usec, $sec) = explode(".", $time);
    $date = date($format,$usec);
    return str_replace('x', $sec, $date);
@@ -4843,7 +4846,7 @@ function insert_lottery_sn($order_info){
 	{
 		$lottery_max=10000000;
 	}
-	
+
 	for($i=0;$i<$order_info['num'];$i++)
 	{
 		do{
@@ -4852,11 +4855,11 @@ function insert_lottery_sn($order_info){
 			$lottery['lottery_sn']=$lottery_sn;
 			$lottery['create_time']=get_gmtime();
 			$lottery['time_msec']=microtime_float();
-			
+
 			$lottery_insert_id=$GLOBALS['db']->autoExecute(DB_PREFIX."deal_order_lottery",$lottery);
 		}while(!$lottery_insert_id);
 	}
-	
+
 }
 /**
  * 幸运号确定处理  这没有对，幸运号数组$lottery_num,$deal_id,$user_id判断正确性，在函数外面判断
@@ -4874,7 +4877,7 @@ function handle_luckyer_lotter_sn($lottery_num,$lottery_list,$deal_id,$user_id)
 	{
 		//更新未抽中的抽奖号状态为未抽中
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal_order_lottery set is_winner=2,lottery_draw_time=".NOW_TIME." where lottery_sn not in('".implode("','",$lottery_num)."') and deal_id=".$deal_id." and is_winner=0");
-		
+
 		$deal_update_log_info="幸运号如下：\n";
 		foreach($lottery_list as $k=>$v){
 			//更新订单是幸运订单
@@ -4894,19 +4897,19 @@ function handle_luckyer_lotter_sn($lottery_num,$lottery_list,$deal_id,$user_id)
 			$msg_data['user_id'] = $v['user_id'];
 			$msg_data['is_html'] = 0;
 			$GLOBALS['db']->autoExecute(DB_PREFIX."deal_msg_list",$msg_data); //插入
-			
+
 			//动态内容
 			$num=$GLOBALS['db']->getOne("select sum(num) from ".DB_PREFIX."deal_order where user_id=".$v['user_id']." and deal_id=".intval($v['deal_id'])." and deal_item_id=".intval($v['deal_item_id'])." and type=3 and order_status=3 and is_refund=0");
 			$deal_update_log_info .=$v['user_name'].':'.$v['lottery_sn']." 支持数：".$num."\n";
 		}
 		//更新未抽中的订单为未抽中
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal_order set is_winner=2,lottery_draw_time=".NOW_TIME." where is_winner=0 and type=3 and deal_id=".$deal_id."");
-			
+
 		//更新项目开奖时间
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal set lottery_draw_time=".NOW_TIME." where id=".intval($v['deal_id'])." and user_id= ".$user_id."");
 		//更新子项目开奖时间
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal_item set lottery_draw_time=".NOW_TIME." where deal_id=".intval($v['deal_id'])." and type=2");
-		
+
 		//抽奖结果更新到项目动态
 		$deal_update_data=array();
 		$deal_update_data['log_info']=$deal_update_log_info;
@@ -4915,21 +4918,21 @@ function handle_luckyer_lotter_sn($lottery_num,$lottery_list,$deal_id,$user_id)
 		$deal_update_data['deal_id']=$deal_id;
 		$deal_update_data['create_time']=NOW_TIME;
 		$GLOBALS['db']->autoExecute(DB_PREFIX."deal_log",$deal_update_data);
-		
+
 		//自动把没有被抽中的订单设置为已发放回报，已确认收到
 		$order_repay_memo="感谢您的参与，希望下次您是幸运星";
 	    $GLOBALS['db']->query("update ".DB_PREFIX."deal_order set repay_time=".NOW_TIME.",repay_memo='".$order_repay_memo."',repay_make_time=".NOW_TIME." where deal_id=".$deal_id." and is_winner=2 and type=3");
-		
+
 		//删除幸运号列表缓存
 		rm_auto_cache('lottery_luckyers',array('deal_id'=>$deal_id));
-		
+
 		$retrun['status']=1;
 	}else{
 		//删除幸运号列表缓存
 		rm_auto_cache('lottery_luckyers',array('deal_id'=>$deal_id));
 		$retrun['status']=0;
 	}
-	
+
 	return $retrun;
 }
 //获得指定订单的抽奖号抽奖
@@ -4959,7 +4962,7 @@ function split_lottery_sn($lottery_sn)
 	$sn_length=strlen($lottery_sn);
 	$sn_array['sn_number']=substr($lottery_sn,-8);
 	$sn_array['item_id']=substr($lottery_sn,0,$sn_length-8);
-	
+
 	return $sn_array;
 }
 function trim_utf8mb4($str){
@@ -5043,17 +5046,17 @@ function check_url($url)
 	else
 	return true;
 }
-	/* 
+	/*
 	 * 转成元
 	 * $money 金额
-	 */ 
+	 */
 	 function transform_yuan($money){
 		$money =intval($money);
 		if($money){
 			return $money * 10000;
 		}
 	}
-	/* 
+	/*
 	 * 元转成逆转万元
 	 * $money 金额
 	 */
@@ -5064,7 +5067,7 @@ function check_url($url)
 		}
 	}
 	/*
-	 * 
+	 *
 	 */
 	function deal_type_url($param=array(),$type = 0){
 		if($type==1){
@@ -5091,7 +5094,7 @@ function check_url($url)
 		//删除超过时间的验证码
 		$GLOBALS['db']->query("DELETE FROM ".DB_PREFIX."mobile_verify_code WHERE create_time <=".$n_time);
 	}
-	
+
 	//获取 房产众筹楼盘阶段
 	function get_houses_status_list()
 	{
@@ -5113,7 +5116,7 @@ function check_url($url)
 		);
 		return $houses_status;
 	}
-	
+
 	/**
 	 * 插入项目图片
 	 * @param array $images_array 图片url数组名
@@ -5129,7 +5132,7 @@ function check_url($url)
 			$GLOBALS['db']->autoExecute(DB_PREFIX."deal_image",$images_data,"INSERT","","SILENT");
 		}
 	}
-	
+
 	function get_deal_images_list($deal_id,$deal_image)
 	{
 		//项目图片
@@ -5143,7 +5146,7 @@ function check_url($url)
 		{
 			$deal_imgs_all=$GLOBALS['db']->getAll("select image from ".DB_PREFIX."deal_image where deal_id = ".intval($deal_id)."");
 		}
-		
+
 		return $deal_imgs_all;
 	}
 
@@ -5206,7 +5209,7 @@ function create_app_js($app_conf){
 /**
  * 获取返回参与列表的url
  * @param $order_id 订单id
- * @param $terminal 手机端:wap/pc端 
+ * @param $terminal 手机端:wap/pc端
  */
 function url_get_account($order_id,$terminal,$is_array)
 {
@@ -5219,12 +5222,12 @@ function url_get_account($order_id,$terminal,$is_array)
 	);
 
 	$deal_type=intval($GLOBALS['db']->getOne("select d.type from ".DB_PREFIX."deal_order as ord left join ".DB_PREFIX."deal as d on d.id = ord.deal_id where ord.id= ".intval($order_id).""));
-	
+
 	if($terminal=='wap')
 		$url_var=url_wap("account#".$deal_type_array[$deal_type]."");
 	else
 		$url_var=url("account#".$deal_type_array[$deal_type]."");
-	
+
 	if($is_array ==1)
 	{
 		return array('url'=>$url_var,'act_val'=>$deal_type_array[$deal_type],'deal_type'=>$deal_type);
