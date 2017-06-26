@@ -124,5 +124,67 @@ class api_userModule extends BaseModule
 
         return parent::JsonSuccess();
     }
+    
+    /**
+     * 银行卡列表
+     * **/
+    public function bankLists(){
+        $user_id = $_REQUEST['user_id'];
+        $lists = $GLOBALS['db']->getAll("select id,bank_name,bankcard,real_name,genre from ".DB_PREFIX."user_bank where user_id=".$user_id);
+        
+        if($lists==0){
+            return parent::JsonError('暂无数据');
+        }else{
+            return parent::JsonSuccess($lists);
+        }
+        
+    }
+    
+    /**
+     * 添加银行卡页面，获取银行列表
+     * **/
+    public function bank(){
+        $user_id = $_REQUEST['user_id'];
+        $lists = $GLOBALS['db']->getAll("select id,name from ".DB_PREFIX."bank");
+        
+        if($lists==0){
+            return parent::JsonError('操作失败');
+        }else{
+            return parent::JsonSuccess($lists);
+        }
+        
+    }
+    
+    /**
+     * 执行添加银行卡
+     * **/
+    public function bankAdd(){
+        $data = $_REQUEST;
+        
+        $res = $GLOBALS['db']->autoExecute(DB_PREFIX."user_bank",$data);
+        
+        if($res==0){
+            return parent::JsonError('操作失败');
+        }else{
+            return parent::JsonSuccess();
+        }
+        
+    }
+    
+    /**
+     * 删除已绑定银行卡
+     * **/
+    public function bankDel(){
+        $data = $_REQUEST;
+        
+        $res = $GLOBALS['db']->query("delete from ".DB_PREFIX."user_bank where user_id=".$data['user_id']." and id=".$data['id']);
+        
+        if($res==0){
+            return parent::JsonError('操作失败');
+        }else{
+            return parent::JsonSuccess();
+        }
+        
+    }
 }
 ?>
