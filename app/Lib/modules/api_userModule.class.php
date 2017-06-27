@@ -20,7 +20,7 @@ class api_userModule extends BaseModule
             return parent::JsonError('参数错误');
         }
         //用户信息
-        $info = $GLOBALS['db']->getRow("select id,user_name,age,mobile from ".DB_PREFIX."user where id=".$id);
+        $info = $GLOBALS['db']->getRow("select id,user_name,age,mobile,thirdbind,thirdnum from ".DB_PREFIX."user where id=".$id);
         $info['head'] = get_user_avatar($info['id'],'middle');
         //银行卡
         $bank = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."user_bank where user_id=".$id);
@@ -90,10 +90,26 @@ class api_userModule extends BaseModule
         $res2 = $GLOBALS['db']->autoExecute(DB_PREFIX."user_consignee",array('is_default'=>1),"UPDATE",'user_id='.$user_id." and id=".$id);
 
         if($res1 && $res2){
-            return true;
+            return parent::JsonSuccess();
         }else{
-            return false;
+            return parent::JsonError('修改失败');
         }
+    }
+    
+    /**
+     * 删除收货地址
+     * **/
+    public function addressDel(){
+        $data = $_REQUEST;
+        
+        $res = $GLOBALS['db']->query("delete from ".DB_PREFIX."user_consignee where user_id=".$data['user_id']." and id=".$data['id']);
+        
+        if($res==0){
+            return parent::JsonError('操作失败');
+        }else{
+            return parent::JsonSuccess();
+        }
+        
     }
 
     /**
