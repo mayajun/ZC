@@ -7,6 +7,8 @@
 // | Author: 甘味人生(526130@qq.com)
 // +----------------------------------------------------------------------
 
+header("Access-Control-Allow-Origin: *");
+
 //发布接口
 class api_publishModule extends BaseModule
 {
@@ -21,7 +23,7 @@ class api_publishModule extends BaseModule
             return parent::JsonError('暂无数据');
         }
     }
-    
+
     /**
      * 发布 二级分类
      * **/
@@ -38,7 +40,7 @@ class api_publishModule extends BaseModule
             return parent::JsonError('暂无数据');
         }
     }
-    
+
     /**
      * 发布
      * **/
