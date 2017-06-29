@@ -75,7 +75,7 @@ class api_orderModule extends BaseModule
         if (!empty($_REQUEST['status']) || !empty($_REQUEST['id'])) {
             switch($_REQUEST['status']){
                 case 'paid': // 已支付时调用
-                    $data['traid_sn'] = $_REQUEST['trade_sn']; // 交易号
+                    $data['trade_sn'] = $_REQUEST['trade_sn']; // 交易号
                     $data['paid_at'] = time();
                 case 'sent': // 已发货时调用
                     $data['logistics_company'] = $_REQUEST['logistics_company']; // 快递公司
