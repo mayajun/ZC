@@ -22,9 +22,10 @@ class api_shareModule extends BaseModule
         $data['user_id'] = $_REQUEST['user_id'];
         $data['deal_id'] = $_REQUEST['deal_id'];
         $data['share_name'] = $_REQUEST['share_name'];
+        $data['share_des'] = $_REQUEST['share_des'];
         $data['share_goal'] = $_REQUEST['share_goal'];
         $data['created_at'] = time();
-        $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "order", $data);
+        $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "deal_share", $data);
         if ($res) {
             return parent::JsonSuccess();
         } else {
@@ -52,6 +53,7 @@ class api_shareModule extends BaseModule
         if (!$res) {
             return parent::JsonError('暂无数据');
         }
+        return parent::JsonSuccess($res);
     }
 
     // 获取一起帮详情
@@ -68,22 +70,39 @@ class api_shareModule extends BaseModule
             return parent::JsonError('暂无数据');
         }
 
+        $res = current($res);
         // 获取原帮助信息
-        $dealInfo = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal where id = " . $res['deal_id']);
+        $dealInfo = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal where id = " . intval($res['deal_id']));
 
+        $dealInfo = current($dealInfo);
         $res['dealInfo']['name'] = $dealInfo['name'];
-        $res['dealInfo']['image'] = $dealInfo['image'];
+        $res['dealInfo']['image'] = API_DOMAIN . substr($dealInfo['image'], 1);
+
         return parent::JsonSuccess($res);
     }
 
     // 修改一起帮
-    public function updateOrder()
+    public function updateShare()
     {
         if (!$_REQUEST['id']) {
             return parent::JsonError('参数错误');
         }
+        // // 查询我的一起帮
+        // $shareInfo = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_share where id = " . $_REQUEST['id']);
+        //
+        // if (!$shareInfo) {
+        //     return parent::JsonError('暂无数据');
+        // }
+        //
+        // $shareInfo = current($shareInfo);
+        // // 判断所属
+        // if (!$shareInfo['user_id'] != $_REQUEST['user_id']) {
+        //     return parent::JsonError('操作非法');
+        // }
 
-        $data = $_REQUEST;
+        $data['share_name'] = $_REQUEST['share_name'];
+        $data['share_des'] = $_REQUEST['share_des'];
+        $data['share_goal'] = $_REQUEST['share_goal'];
         $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "deal_share", $data, "UPDATE", "id=" . intval($_REQUEST['id']));
 
         if ($res) {
