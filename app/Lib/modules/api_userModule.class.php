@@ -383,5 +383,19 @@ class api_userModule extends BaseModule
 //        exit;
         return parent::JsonSuccess(['total'=>$total,'lists'=>$lists]);
     }
+   
+   /**
+    * 说明：生成二维码并将路径存入数据库
+    * **/
+   public function getQrcode(){
+        //生成新二维码并存放在指定目录中
+        $user_id = es_cookie::get('id');
+        $res = getImage($user_id,"public/images/qrcode","user_".$user_id.".png");
+        
+        //二维码路径+名称
+        $path = $res['save_path'];
+        //将路径存入数据库
+        $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('rec_image'=>$path),"UPDATE",'id='.$user_id);
+   }
 }
 ?>
