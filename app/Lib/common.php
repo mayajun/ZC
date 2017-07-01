@@ -19,7 +19,7 @@ function format_nav_list($nav_list)
 			if($v['url']!='')
 			{
 				if(substr($v['url'],0,7)!="http://")
-				{		
+				{
 					//开始分析url
 					$nav_list[$k]['url'] = APP_ROOT."/".$v['url'];
 				}
@@ -47,21 +47,21 @@ function init_nav_list($nav_list)
 	$u_param = substr($u_param,0,-1);
 
 	foreach($nav_list as $k=>$v)
-	{			
+	{
 		if($v['url']=='')
 		{
 				if($v['u_module']=="")$v['u_module']="index";
 				if($v['u_action']=="")$v['u_action']="index";
 				$route = $v['u_module'];
-				if($v['u_action']!='')$route.="#".$v['u_action'];								
-				$str = "u:".$route."|".$v['u_param'];					
-				$nav_list[$k]['url'] =  parse_url_tag($str);		
+				if($v['u_action']!='')$route.="#".$v['u_action'];
+				$str = "u:".$route."|".$v['u_param'];
+				$nav_list[$k]['url'] =  parse_url_tag($str);
 				if(ACTION_NAME==$v['u_action']&&MODULE_NAME==$v['u_module']&&$v['u_param']==$u_param)
-				{					
-					$nav_list[$k]['current'] = 1;										
-				}	
+				{
+					$nav_list[$k]['current'] = 1;
+				}
 		}
-	}	
+	}
 	return $nav_list;
 }
 
@@ -71,7 +71,7 @@ class ChildIds
 {
 	public function __construct($tb_name)
 	{
-		$this->tb_name = $tb_name;	
+		$this->tb_name = $tb_name;
 	}
 	private $tb_name;
 	private $childIds;
@@ -107,14 +107,14 @@ function get_spec_image($img_path,$width=0,$height=0,$gen=0,$is_preview=true,$is
 		$file = $pathinfo['basename'];
 		$dir = $pathinfo['dirname'];
 		$dir = str_replace("./public/", "/public/", $dir);
-		
+
 		if($width==0)
 		{
 			$file_name = $GLOBALS['distribution_cfg']['OSS_DOMAIN'].$dir."/".$file;
 		}
 		else if($height==0)
 		{
-			$file_name = $GLOBALS['distribution_cfg']['OSS_DOMAIN'].$dir."/".$file."@".$width."w_1x.jpg"; 
+			$file_name = $GLOBALS['distribution_cfg']['OSS_DOMAIN'].$dir."/".$file."@".$width."w_1x.jpg";
 		}
 		else if($gen==0)
 			$file_name = $GLOBALS['distribution_cfg']['OSS_DOMAIN'].$dir."/".$file."@".$width."w_".$height."h_0c_1e_1x.jpg"; //以短边缩放 1e 不剪裁
@@ -127,30 +127,30 @@ function get_spec_image($img_path,$width=0,$height=0,$gen=0,$is_preview=true,$is
 	else
 	{
 		$img_name = substr($img_path,0,-4);
-		$img_ext = substr($img_path,-3);	
+		$img_ext = substr($img_path,-3);
 		if($is_deleteable){
 			if($is_preview)
-			$new_path = $img_name."_".$width."x".$height.".jpg";	
+			$new_path = $img_name."_".$width."x".$height.".jpg";
 			else
-			$new_path = $img_name."o_".$width."x".$height.".jpg";	
+			$new_path = $img_name."o_".$width."x".$height.".jpg";
 		}
 		else
 		{
 			if($is_preview)
-			$new_path = $img_name."".$width."".$height.".jpg";	
+			$new_path = $img_name."".$width."".$height.".jpg";
 			else
 			$new_path = $img_name."o".$width."".$height.".jpg";
 		}
-		
-		
 
-		
+
+
+
 		if(!file_exists(APP_ROOT_PATH.$new_path))
 		{
 			require_once APP_ROOT_PATH."system/utils/es_imagecls.php";
 			$imagec = new es_imagecls();
 			$thumb = $imagec->thumb(APP_ROOT_PATH.$img_path,$width,$height,$gen,true,"",$is_preview,$is_deleteable);
-			
+
 			if(app_conf("PUBLIC_DOMAIN_ROOT")!='')
         	{
         		$paths = pathinfo($new_path);
@@ -160,7 +160,7 @@ function get_spec_image($img_path,$width=0,$height=0,$gen=0,$is_preview=true,$is
 	        	$syn_url = app_conf("PUBLIC_DOMAIN_ROOT")."/es_file.php?username=".app_conf("IMAGE_USERNAME")."&password=".app_conf("IMAGE_PASSWORD")."&file=".get_domain().APP_ROOT."/".$path."/".$filename."&path=".$pathwithoupublic."/&name=".$filename."&act=0";
 	        	@file_get_contents($syn_url);
         	}
-			
+
 		}
 	}
 	return $new_path;
@@ -176,7 +176,7 @@ function get_spec_gif_anmation($url,$width,$height)
 	$imagec = new es_imagecls();
 	foreach($gif->IMGS['frames'] as $k=>$img)
 	{
-		$im = imagecreatefromstring($gif->getgif($k));		
+		$im = imagecreatefromstring($gif->getgif($k));
 		$im = $imagec->make_thumb($im,$img['FrameWidth'],$img['FrameHeight'],"gif",$width,$height,$gen=1);
 		ob_start();
 		imagegif($im);
@@ -185,7 +185,7 @@ function get_spec_gif_anmation($url,$width,$height)
 		$frames [ ] = $content;
    		$framed [ ] = $img['frameDelay'];
 	}
-		
+
 	$gif_maker = new GIFEncoder (
 	       $frames,
 	       $framed,
@@ -200,7 +200,7 @@ function get_spec_gif_anmation($url,$width,$height)
 //编译生成css文件
 function parse_css($urls)
 {
-	
+
 	$url = md5(implode(',',$urls));
 	$css_url = 'public/runtime/statics/'.$url.'.css';
 	$url_path = APP_ROOT_PATH.$css_url;
@@ -208,8 +208,8 @@ function parse_css($urls)
 	{
 		if(!file_exists(APP_ROOT_PATH.'public/runtime/statics/'))
 		mkdir(APP_ROOT_PATH.'public/runtime/statics/',0777);
-		$tmpl_path = $GLOBALS['tmpl']->_var['TMPL'];	
-	
+		$tmpl_path = $GLOBALS['tmpl']->_var['TMPL'];
+
 		$css_content = '';
 		foreach($urls as $url)
 		{
@@ -224,12 +224,12 @@ function parse_css($urls)
 }
 
 /**
- * 
+ *
  * @param $urls 载入的脚本
  * @param $encode_url 需加密的脚本
  */
 function parse_script($urls,$encode_url=array())
-{	
+{
 	$url = md5(implode(',',$urls));
 	$js_url = 'public/runtime/statics/'.$url.'.js';
 	$url_path = APP_ROOT_PATH.$js_url;
@@ -237,12 +237,12 @@ function parse_script($urls,$encode_url=array())
 	{
 		if(!file_exists(APP_ROOT_PATH.'public/runtime/statics/'))
 		mkdir(APP_ROOT_PATH.'public/runtime/statics/',0777);
-	
+
 		if(count($encode_url)>0)
 		{
 			require_once APP_ROOT_PATH."system/libs/javascriptpacker.php";
 		}
-		
+
 		$js_content = '';
 		foreach($urls as $url)
 		{
@@ -251,9 +251,9 @@ function parse_script($urls,$encode_url=array())
 			{
 				$packer = new JavaScriptPacker($append_content);
 				$append_content = $packer->pack();
-			}			
+			}
 			$js_content .= $append_content;
-		}		
+		}
 //		require_once APP_ROOT_PATH."system/libs/javascriptpacker.php";
 //	    $packer = new JavaScriptPacker($js_content);
 //		$js_content = $packer->pack();
@@ -273,7 +273,7 @@ function load_page_png($img)
 //显示错误
 function showErr($msg,$ajax=0,$jump='',$stay=0)
 {
-	
+
 	if($ajax==1)
 	{
 		$result['status'] = 0;
@@ -283,7 +283,7 @@ function showErr($msg,$ajax=0,$jump='',$stay=0)
         echo(json_encode($result));exit;
 	}
 	else
-	{		
+	{
 		$GLOBALS['tmpl']->assign('page_title',"提示");
 		$GLOBALS['tmpl']->assign('msg',$msg);
 		if($jump=='')
@@ -302,7 +302,7 @@ function showErr($msg,$ajax=0,$jump='',$stay=0)
 //显示成功
 function showSuccess($msg,$ajax=0,$jump='',$stay=0)
 {
-	
+
 	if($ajax==1)
 	{
 		$result['status'] = 1;
@@ -332,12 +332,12 @@ function showSuccess($msg,$ajax=0,$jump='',$stay=0)
 function get_gopreview()
 {
 		$gopreview = es_session::get("gopreview");
-		 
+
 		if(!isset($gopreview)||$gopreview=="")
 		{
-			$gopreview = es_session::get('before_login')?es_session::get('before_login'):url("index");				
-		}	
-		es_session::delete("before_login");	
+			$gopreview = es_session::get('before_login')?es_session::get('before_login'):url("index");
+		}
+		es_session::delete("before_login");
 		es_session::delete("gopreview");
 		return $gopreview;
 }
@@ -351,20 +351,20 @@ function get_gopreview_wap()
 		}
 		if(!isset($gopreview)||$gopreview=="")
 		{
-			$gopreview = es_session::get('before_login')?es_session::get('before_login'):url_wap("index");				
-		}	
+			$gopreview = es_session::get('before_login')?es_session::get('before_login'):url_wap("index");
+		}
 		return $gopreview;
 }
 function get_current_url()
 {
-	$url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?");   
+	$url  =  $_SERVER['REQUEST_URI'].(strpos($_SERVER['REQUEST_URI'],'?')?'':"?");
     $parse = parse_url($url);
     if(isset($parse['query'])) {
             parse_str($parse['query'],$params);
             $url   =  $parse['path'].'?'.http_build_query($params);
     }
     if(app_conf("URL_MODEL")==1)
-    {	
+    {
     	$url = $GLOBALS['current_url'];
     	if(intval($_REQUEST['p'])>0)
     	{
@@ -381,7 +381,7 @@ function get_current_url()
     			$url.="/p-".intval($_REQUEST['p']);
     		}
     	}
-		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);		
+		if(substr($url,-1,1)=='/'||substr($url,-1,1)=='-') $url = substr($url,0,-1);
     	$module=$req['ctl'];
     	$param=$req;
     	if($url==''){
@@ -400,13 +400,13 @@ function get_current_url()
 					}
 				}elseif($param['p']){
 					$url=APP_ROOT."/article_cate?p=".$param['p'];
-					
+
 				}elseif($param['tag']){
 					$url=APP_ROOT."/article_cate?tag=".$param['tag'];
 				}
 				else{
 					$url=APP_ROOT."/article_cate";
-					
+
 				}
 			}elseif($module=='article'){
 				if($param['id']){
@@ -423,7 +423,7 @@ function get_current_url()
 			}
 		}
 		if($url=='')$url="/";
-    	
+
     }
     return $url;
 }
@@ -431,12 +431,12 @@ function get_current_url()
 function set_gopreview()
 {
 	$url =  get_current_url();
-	es_session::set("gopreview",$url); 
-}	
+	es_session::set("gopreview",$url);
+}
 function app_redirect_preview()
 {
 	app_redirect(get_gopreview());
-}	
+}
 
 
 
@@ -485,7 +485,7 @@ function show_ke_form_agency($text_name,$width="300",$height="80",$cnt="")
 	return "<div  style='margin-bottom:5px; '><textarea id='".$text_name."' name='".$text_name."' class='ketext' style='width:".$width."px; height:".$height."px;' >".$cnt."</textarea> </div>";
   }
 function show_ke_topic($id,$width=630,$height=350,$cnt="")
-{	
+{
 	return "<script type='text/javascript'> var eid = '".$id."';KE.show({urlType:'domain', id:eid, items : ['fsource', 'fimage', 'justifyleft', 'justifycenter', 'justifyright','justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript','superscript', 'selectall', 'textcolor', 'bold','italic', 'underline', 'strikethrough', 'fullscreen','-','title', 'fontname', 'fontsize'], skinType: 'tinymce',allowFileManager : false,resizeMode : 0, newlineTag:'nl'});</script><div  style='margin-bottom:5px; '><textarea id='".$id."' name='".$id."' style='width:".$width."px; height:".$height."px;' >".$cnt."</textarea> </div>";
 }
 
@@ -500,8 +500,8 @@ function vaild_html($content)
 //{
 //	 $domain = app_conf("PUBLIC_DOMAIN_ROOT")==''?get_domain().APP_ROOT:app_conf("PUBLIC_DOMAIN_ROOT");
 //	 $domain_origin = get_domain().APP_ROOT;
-//	 $content = str_replace($domain."/public/","./public/",$content);	
-//	 $content = str_replace($domain_origin."/public/","./public/",$content);		 
+//	 $content = str_replace($domain."/public/","./public/",$content);
+//	 $content = str_replace($domain_origin."/public/","./public/",$content);
 //	 return $content;
 //}
 
@@ -519,10 +519,10 @@ function log_deal_visit($deal_id)
 			$GLOBALS['db']->query("update ".DB_PREFIX."deal set view_count = view_count + 1 where id = ".$deal_id);
 		}
 	}
-	
+
 }
 
- 
+
 //获取上线时间
 function online_date($time,$online_time)
 {
@@ -554,7 +554,7 @@ function pass_date($time)
 		{
 			//一天
 			$time_span_lang = round($time_span/(3600*24))."天前";
-	
+
 		}
 		elseif($time_span>3600)
 		{
@@ -565,7 +565,7 @@ function pass_date($time)
 		{
 			//一分
 			$time_span_lang = round($time_span/(60))."分钟前";
-			
+
 		}
 		else
 		{
@@ -589,8 +589,8 @@ function sql_check($type=''){
 	if($_REQUEST['from']=='wap'||$type=='wap'){
 		$check['file_name']='wap.php';
 	}
-	
-	
+
+
 	$check['url']="http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
   	$module_name='ctl';
 	$action_name='act';
@@ -603,10 +603,10 @@ function sql_check($type=''){
  	//
 	$request=array_filter($_REQUEST);
 	foreach($request as $k=>$v){
-		 
+
  		if($k==$module_name||$k==$action_name){
 			unset($request[$k]);
-			
+
 		}
 	}
   	asort($request);
@@ -616,7 +616,7 @@ function sql_check($type=''){
 		$check['module_action_para']=$module.'-'.$action.'-'.$check['para'];
 	}
 	//
-	
+
  	$query_time = number_format($GLOBALS['db']->queryTime,6);
 	$check['query_time']=$query_time;
 	if($GLOBALS['begin_run_time']==''||$GLOBALS['begin_run_time']==0)
@@ -655,7 +655,7 @@ function sql_check($type=''){
 	$check['sql_num']=count($GLOBALS['db']->queryLog);
 	$sql_array=array();
 	$old_num=$GLOBALS['db']->getOne("select sql_num from ".DB_PREFIX."sql_check where module_action_para='".$check['module_action_para']."' order by id desc ");
-	
+
 	foreach($GLOBALS['db']->queryLog as $K=>$sql)
 	{
 		$sql_array[]=$sql;
@@ -665,7 +665,7 @@ function sql_check($type=''){
    	if($old_num!=$check['sql_num']||$old_num==0){
    		$GLOBALS['db']->autoExecute(DB_PREFIX."sql_check",$check,"INSERT","","SILENT");
  	}
- 	
+
 }
 
 /**
@@ -763,7 +763,7 @@ function cache_log_deal($log)
 		if($log['deal_info'])
 		{
 			$log['deal_info']['remain_days']  = $deal_info_cache['deal_info']['remain_days'] = ceil(($log['deal_info']['end_time'] - NOW_TIME)/(24*3600));
-			$log['deal_info']['percent']  = $deal_info_cache['deal_info']['percent'] = round($log['deal_info']['support_amount']/$log['deal_info']['limit_price']*100,2);			
+			$log['deal_info']['percent']  = $deal_info_cache['deal_info']['percent'] = round($log['deal_info']['support_amount']/$log['deal_info']['limit_price']*100,2);
 		}
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal_log set deal_info_cache = '".serialize($deal_info_cache)."' where id = ".$log['id']);
 	}
@@ -773,29 +773,29 @@ function cache_log_deal($log)
 		$log['deal_info'] = $deal_info_cache['deal_info'];
 	}
 	return $log;
-	
+
 }
 
 //缓存项目信息
 function cache_deal_extra($deal_info)
 {
 	if($deal_info['deal_extra_cache']=="")
-	{	
+	{
 		$deal_extra_cache = array();
-		$deal_info['deal_faq_list'] = $deal_extra_cache['deal_faq_list'] = $GLOBALS['db']->getAll("select * from ".DB_PREFIX."deal_faq where deal_id = ".$deal_info['id']." order by sort asc");		
+		$deal_info['deal_faq_list'] = $deal_extra_cache['deal_faq_list'] = $GLOBALS['db']->getAll("select * from ".DB_PREFIX."deal_faq where deal_id = ".$deal_info['id']." order by sort asc");
 		$deal_info['deal_item_list'] = $GLOBALS['db']->getAll("select * from ".DB_PREFIX."deal_item where deal_id = ".$deal_info['id']." order by price asc");
 		foreach($deal_info['deal_item_list'] as $k=>$v)
 		{
 			$deal_info['deal_item_list'][$k]['images'] = $GLOBALS['db']->getAll("select * from ".DB_PREFIX."deal_item_image where deal_id=".$deal_info['id']." and deal_item_id = ".$v['id']);
-			$deal_info['deal_item_list'][$k]['price_format'] = number_price_format($v['price']);				
+			$deal_info['deal_item_list'][$k]['price_format'] = number_price_format($v['price']);
 		}
 		$deal_extra_cache['deal_item_list'] = $deal_info['deal_item_list'];
-				
+
 		$GLOBALS['db']->query("update ".DB_PREFIX."deal set deal_extra_cache  = '".serialize($deal_extra_cache)."' where id = ".$deal_info['id']);
 	}
 	else
 	{
-		
+
 		$deal_extra_cache = unserialize($deal_info['deal_extra_cache']);
 		$deal_info['deal_faq_list'] = $deal_extra_cache['deal_faq_list'];
 		$deal_info['deal_item_list'] = $deal_extra_cache['deal_item_list'];
@@ -818,18 +818,18 @@ function cache_deal_comment($comment)
 }
 
 function get_deal_list($limit="",$conditions="",$orderby=" d.is_top DESC,d.sort asc,d.id desc ",$deal_type='deal'){
-	
-	
+
+
 	if($limit!=""){
 		$limit = " LIMIT ".$limit;
 	}
-	
+
 	if($orderby!=""){
 		$orderby = " ORDER BY ".$orderby;
 	}
-	
+
 	$condition = " 1=1 AND d.is_delete = 0 AND d.is_effect = 1 ";
-	
+
 	if(app_conf("INVEST_STATUS")==0){
 		$deal_type_array[]=0;//产品
 		$deal_type_array[]=1;//股权
@@ -841,24 +841,24 @@ function get_deal_list($limit="",$conditions="",$orderby=" d.is_top DESC,d.sort 
 	}
     if(app_conf("IS_HOUSE")==1)
      	$deal_type_array[]=2;//房产
-     	
+
     if(app_conf("IS_SELFLESS")==1)
      	$deal_type_array[]=3;//公益
-     	
+
     if(app_conf("IS_FINANCE")==1)
      	$deal_type_array[]=4;//融资
-     	
+
     if($deal_type_array)
 	{
 		$condition.= " AND d.type in(".implode(',',$deal_type_array).")";
 	}
-	
+
 	if($conditions!=""){
 		$condition.=" AND ".$conditions;
 	}
 
 	//权限浏览控制
- 
+
  	$deal_count = $GLOBALS['db']->getOne("select count(DISTINCT(d.id))  from ".DB_PREFIX."deal  as d left join ".DB_PREFIX."user_bonus as ub on d.id = ub.deal_id  where ".$condition);
  	/*（所需项目）准备虚拟数据 start*/
 	$deal_list = array();
@@ -890,33 +890,33 @@ function get_deal_list($limit="",$conditions="",$orderby=" d.is_top DESC,d.sort 
 				$deal_list[$k]['left_begin_day'] = intval(($v['begin_time']  - $now_time));
 			}
 			if($v['begin_time'] > $now_time){
-					$deal_list[$k]['status']= '0';                                 
+					$deal_list[$k]['status']= '0';
 			}
 			elseif($v['end_time'] < $now_time && $v['end_time']>0){
 				if($deal_list[$k]['percent'] >=100){
-					$deal_list[$k]['status']= '1';  
+					$deal_list[$k]['status']= '1';
 				}
 				else{
-						$deal_list[$k]['status']= '2'; 
+						$deal_list[$k]['status']= '2';
 				}
-			} 
+			}
 			else{
 					if ($v['end_time'] > 0) {
-						$deal_list[$k]['status']= '3'; 
+						$deal_list[$k]['status']= '3';
 					}
 					else
-					$deal_list[$k]['status']= '4'; 
+					$deal_list[$k]['status']= '4';
 			}
-			
+
 			if($v['type']==1){
 				$deal_list[$k]['virtual_person']=$deal_list[$k]['invote_num'];
 				$deal_list[$k]['support_count'] =$deal_list[$k]['invote_num'];
 				$deal_list[$k]['support_amount'] =$deal_list[$k]['invote_money'];
 				$deal_list[$k]['percent'] = round(($deal_list[$k]['support_amount'])/$v['limit_price']*100,2);
 				$deal_list[$k]['limit_price_w']=($deal_list[$k]['limit_price'])/10000;
-				$deal_list[$k]['invote_mini_money_w']=number_format(($deal_list[$k]['invote_mini_money'])/10000,2);				
+				$deal_list[$k]['invote_mini_money_w']=number_format(($deal_list[$k]['invote_mini_money'])/10000,2);
 				$deal_list[$k]['bonus_count']=$GLOBALS['db']->getOne("select count(*) from ".DB_PREFIX."user_bonus where status = 1 and deal_id =".$v['id']);
-				
+
 			}else{
 				$deal_list[$k]['virtual_person']=$deal_list[$k]['virtual_num'];
 				$deal_list[$k]['support_count'] =$deal_list[$k]['virtual_num']+$deal_list[$k]['support_count'];
@@ -934,10 +934,10 @@ function get_deal_list($limit="",$conditions="",$orderby=" d.is_top DESC,d.sort 
    				}
   			}
 		}
- 	 
+
 	}
-	
-	
+
+
 	return array("rs_count"=>$deal_count,"list"=>$deal_list);
 }
 
@@ -947,11 +947,11 @@ function gets_deal_list($limit="",$conditions="",$orderby=" d.sort asc ",$deal_t
 	if($limit!=""){
 		$limit = " LIMIT ".$limit;
 	}
-	
+
 	if($orderby!=""){
 		$orderby = " ORDER BY ".$orderby;
 	}
-	
+
 	if(app_conf("INVEST_STATUS")==0)
 	{
 		$condition = " 1=1 AND d.is_delete = 0 AND d.is_effect = 1 ";
@@ -964,7 +964,7 @@ function gets_deal_list($limit="",$conditions="",$orderby=" d.sort asc ",$deal_t
 	{
 		$condition = " 1=1 AND d.is_delete = 0 AND d.is_effect = 1 and d.type=1 ";
 	}
-	
+
 	if($conditions!=""){
 		$condition.=" AND ".$conditions;
 	}
@@ -997,41 +997,41 @@ function gets_deal_list($limit="",$conditions="",$orderby=" d.sort asc ",$deal_t
 				$deal_list[$k]['left_begin_day'] = intval(($v['begin_time']  - $now_time));
 			}
 			if($v['begin_time'] > $now_time){
-					$deal_list[$k]['status']= '0';                                 
+					$deal_list[$k]['status']= '0';
 			}
 			elseif($v['end_time'] < $now_time && $v['end_time']>0){
 				if($deal_list[$k]['percent'] >=100){
-					$deal_list[$k]['status']= '1';  
+					$deal_list[$k]['status']= '1';
 				}
 				else{
-						$deal_list[$k]['status']= '2'; 
+						$deal_list[$k]['status']= '2';
 				}
-			} 
+			}
 			else{
 					if ($v['end_time'] > 0) {
-						$deal_list[$k]['status']= '3'; 
+						$deal_list[$k]['status']= '3';
 					}
 					else
-					$deal_list[$k]['status']= '4'; 
+					$deal_list[$k]['status']= '4';
 			}
-			
+
 			if($v['type']==1){
 				$deal_list[$k]['virtual_person']=$deal_list[$k]['invote_num'];
 				$deal_list[$k]['support_count'] =$deal_list[$k]['invote_num'];
 				$deal_list[$k]['support_amount'] =$deal_list[$k]['invote_money'];
 				$deal_list[$k]['percent'] = round(($deal_list[$k]['support_amount'])/$v['limit_price']*100,2);
 				$deal_list[$k]['limit_price_w']=($deal_list[$k]['limit_price'])/10000;
-				$deal_list[$k]['invote_mini_money_w']=number_format(($deal_list[$k]['invote_mini_money'])/10000,2);				
+				$deal_list[$k]['invote_mini_money_w']=number_format(($deal_list[$k]['invote_mini_money'])/10000,2);
 				$deal_list[$k]['bonus_count']=$GLOBALS['db']->getOne("select count(*) from ".DB_PREFIX."user_bonus where status = 1 and deal_id =".$v['id']);
-				
+
 			}else{
 				$deal_list[$k]['virtual_person']=$deal_list[$k]['virtual_num'];
 				$deal_list[$k]['support_count'] =$deal_list[$k]['virtual_num']+$deal_list[$k]['support_count'];
 				$deal_list[$k]['support_amount'] =$deal_list[$k]['virtual_price']+$deal_list[$k]['support_amount'];
 				$deal_list[$k]['percent'] = round(($deal_list[$k]['support_amount'])/$v['limit_price']*100,2);
- 			}			
+ 			}
 		}
- 	 
+
 	}
 
 	return array("rs_count"=>$deal_count,"list"=>$deal_list);
@@ -1051,7 +1051,7 @@ function deal_log_list($limit="",$condition="",$orderby="d.create_time desc"){
 				unset($log_list[$k]);
 			}
 		}
-			
+
 	}
 	return array("right_list"=>$log_list,"left_list"=>$full_list);
 }
@@ -1062,15 +1062,15 @@ function send_deal_success_1(){
 	}
 	//项目成功发起者短信
 	$deal_s_user=$GLOBALS['db']->getAll("select d.*,u.mobile from ".DB_PREFIX."deal d LEFT JOIN ".DB_PREFIX."user u ON u.id = d.user_id where d.is_success=1 and d.is_has_send_success=0 and d.is_delete = 0 ");
-	
+
 	$tmpl3=$GLOBALS['db']->getRowCached("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_USER_S'");
 	$tmpl_content3 = $tmpl3['content'];
-	
+
 	foreach ($deal_s_user as $k=>$v){
 		if($v['id']&&$v['mobile']){
 			$user_s_msg['user_name']=$v['user_name'];
 			$user_s_msg['deal_name']=$v['name'];
-		
+
 			$GLOBALS['tmpl']->assign("user_s_msg",$user_s_msg);
 			$msg3=$GLOBALS['tmpl']->fetch("str:".$tmpl_content3);
 			$msg_data3['dest']=$v['mobile'];
@@ -1088,14 +1088,14 @@ function send_deal_success_1(){
 	 		}
   		}
 	}
-	
+
 	$success_deal_user=$GLOBALS['db']->getAll("SELECT dlo.* FROM ".DB_PREFIX."deal_order dlo LEFT JOIN ".DB_PREFIX."deal d ON d.id= dlo.deal_id WHERE d.is_success=1 and d.is_has_send_success=1 and d.is_delete = 0 AND dlo.order_status=3 AND dlo.is_success=1 AND dlo.is_has_send_success=0 ");
-	
+
 	if($success_deal_user){
 		//项目成功支持者
 		$tmpl=$GLOBALS['db']->getRowCached("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_DEAL_SUCCESS'");
 		$tmpl_content = $tmpl['content'];
-		
+
 		foreach ($success_deal_user as $k=>$v){
 			$mobile =$GLOBALS['db']->getOne("SELECT mobile FROM ".DB_PREFIX."user where id =  ".$v['user_id']);
 			if($v['id']&&$mobile){
@@ -1120,7 +1120,7 @@ function send_deal_success_1(){
 			}
 		}
 	}
-	
+
 }
 //项目失败发送短信(支持人、项目发起人)
 function send_deal_fail_1(){
@@ -1129,7 +1129,7 @@ function send_deal_fail_1(){
 	}
 	//项目失败发起者短信
 	$deal_f_user=$GLOBALS['db']->getAll("select d.*,u.mobile,u.user_name  from ".DB_PREFIX."deal d LEFT JOIN ".DB_PREFIX."user u ON u.id = d.user_id where d.is_success=0 and d.is_has_send_success=0 and d.is_delete = 0 and d.support_amount < (d.limit_price-(select sum(virtual_person*price) FROM ".DB_PREFIX."deal_item where deal_id=d.id )) and d.end_time < ".NOW_TIME." and d.end_time!=0");
- 	
+
 	$tmpl2=$GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_USER_F'");
 	$tmpl_content2 = $tmpl2['content'];
 	foreach ($deal_f_user as $k=>$v){
@@ -1153,7 +1153,7 @@ function send_deal_fail_1(){
  			}
 		}
  	}
-	
+
 	//支持人
 	$tmpl=$GLOBALS['db']->getRow("select * from ".DB_PREFIX."msg_template where name='TPL_SMS_DEAL_FAIL'");
 	$tmpl_content = $tmpl['content'];
@@ -1180,7 +1180,7 @@ function send_deal_fail_1(){
 			}
 		}
 	}
-	
+
 }
 //跟投、领投信息列表
 function get_investor_info($deal_id,$type=''){
@@ -1213,7 +1213,7 @@ function get_investor_info($deal_id,$type=''){
 			//跟投信息(4条)
 			$enquiry_info=$GLOBALS['db']->getAll("select i.*,u.user_name,u.user_level,u.is_investor from ".DB_PREFIX."investment_list i LEFT JOIN ".DB_PREFIX."user as u on u.id=i.user_id where i.deal_id=".$deal_id." and i.type=2   ORDER BY i.create_time DESC LIMIT 0,4");
 			foreach ($enquiry_info as $k=>$v){
-				$enquiry_info[$k]['money']=number_format(($v['money']/10000),2); 
+				$enquiry_info[$k]['money']=number_format(($v['money']/10000),2);
 				$enquiry_info[$k]['user_icon'] =$GLOBALS['user_level'][$v['user_level']]['icon'];//用户等级图标
 			}
 			$GLOBALS['tmpl']->assign("enquiry_info",$enquiry_info);
@@ -1223,7 +1223,7 @@ function get_investor_info($deal_id,$type=''){
 		$leader_info=$GLOBALS['db']->getRow("select i.*,u.user_name,u.identify_name,u.user_level,u.is_investor from ".DB_PREFIX."investment_list i LEFT JOIN ".DB_PREFIX."user as u on u.id=i.user_id where i.deal_id=".$deal_id." and i.type=1 and status=1 GROUP BY i.user_id,i.user_id ORDER BY i.user_id DESC");
 		$leader_info['user_icon'] =$GLOBALS['user_level'][$leader_info['user_level']]['icon'];//用户等级图标
 		if($leader_info>0){
-			
+
 			if($leader_info['leader_moban']){
 				$leader_info['leader_moban_y']=urlencode(unserialize($leader_info['leader_moban']));
 				$leader_info['leader_info_name']=substr(strrchr(unserialize($leader_info['leader_moban']), '.'), 1);
@@ -1243,7 +1243,7 @@ function get_investor_info($deal_id,$type=''){
 			 		case 'zip':
 			 		$leader_info['leader_info_exe']='leader_r';
 			 		break;
-			 		
+
 			 		case 'xls':
 			 		$leader_info['leader_info_exe']='leader_x';
 			 		break;
@@ -1257,7 +1257,7 @@ function get_investor_info($deal_id,$type=''){
 			}
 			$leader_info['money']=number_format(($leader_info['money']/10000),2);
 			$GLOBALS['tmpl']->assign("leader_info",$leader_info);
-		}	
+		}
 	}
 }
 
@@ -1293,7 +1293,7 @@ function get_level_access($user_info,$deal_info,$type=0){
  		}
 	}
 	if($user_info['id']!=$deal_info['user_id']){
-	
+
  	$user_level=intval($GLOBALS['user_level'][$user_info['user_level']]['point']);
 	$deal_level=intval($GLOBALS['user_level'][$deal_info['user_level']]['point']);
 	if($deal_level!=0&&($deal_level>$user_level)){
@@ -1319,12 +1319,12 @@ function get_level_access($user_info,$deal_info,$type=0){
 			return 5;
 		}elseif($user_info['investor_status']==2){
 			return 6;
-		} 
-		
+		}
+
 	}
 	}
 	return 1;
-	
+
 }
 
 
@@ -1343,7 +1343,7 @@ function get_link_by_id($id, $limit = "") {
 	            }
 	        }
 	       $group=$GLOBALS['db']->getRowCached("select * from  ".DB_PREFIX."link_group");
-	      $g_links[]=array('list'=>$links,'name'=>$group['name'],'type'=>$group['type']);  
+	      $g_links[]=array('list'=>$links,'name'=>$group['name'],'type'=>$group['type']);
 	    }
     }else{
     	$link_group=$GLOBALS['db']->getAllCached("select * from  ".DB_PREFIX."link_group where is_effect = 1 ");
@@ -1355,9 +1355,9 @@ function get_link_by_id($id, $limit = "") {
 		                $links[$kk]['url'] = $vv['url'];
 		            }
 		        }
-		        $g_links[]=array('list'=>$links,'name'=>$v['name'],'type'=>$v['type']);  
+		        $g_links[]=array('list'=>$links,'name'=>$v['name'],'type'=>$v['type']);
 		    }
-		    
+
     	}
     }
      return $g_links;
@@ -1427,8 +1427,129 @@ function get_center_deal_url(){
 	{
 		$url_act="mine_investor_finance";
 	}
-	
+
 	return url("account#".$url_act."");
+}
+
+
+/**
+ * 作   者：马亚军
+ * 时   间：2016-12-24
+ * 说   明：在线生成二维码并下载
+ * @param string $url 要生成二维码的信息，必须用UTF8编码格式，内容出现 & 符号时，请用 %26 代替,换行符使用 %0A,如：'abc'
+ * @param string $save_dir 文件保存路径    如：'./'
+ * @param string $filename 要保存的文件名  如：'a.png' 
+ * **/
+/*
+*功能：php完美实现下载远程图片保存到本地
+*参数：文件url,保存文件目录,保存文件名称，使用的下载方式
+*当保存文件名称为空时则使用远程文件原来的名称
+*/
+function getImage($pid,$save_dir='',$filename='',$type=0){
+        $ip = $_SERVER['REMOTE_ADDR'];
+	$url = "http://qr.liantu.com/api.php?bg=f3f3f3&fg=ff0000&gc=222222&el=l&w=200&m=10&text=http://".$ip."/public/register?pid=".$pid.".html";//在线二维码生成器
+    if(trim($url)==''){
+		return array('file_name'=>'','save_path'=>'','error'=>1);
+	}
+	if(trim($save_dir)==''){
+		$save_dir='/public/images/qrcode/';
+	}
+    if(trim($filename)==''){//保存文件名
+        $ext=strrchr($url,'.');
+        if($ext!='.gif'&&$ext!='.jpg'&&$ext!='.png'){
+			return array('file_name'=>'','save_path'=>'','error'=>3);
+		}
+        $filename=time().$ext;
+    }
+	if(0!==strrpos($save_dir,'/')){
+		$save_dir.='/';
+	}
+	//创建保存目录
+	if(!file_exists($save_dir)&&!mkdir($save_dir,0777,true)){
+		return array('file_name'=>'','save_path'=>'','error'=>5);
+	}
+    //获取远程文件所采用的方法 
+    if($type){
+		$ch=curl_init();
+		$timeout=5;
+		curl_setopt($ch,CURLOPT_URL,$url);
+		curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+		curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+		$img=curl_exec($ch);
+		curl_close($ch);
+    }else{
+	    ob_start(); 
+	    readfile($url);
+	    $img=ob_get_contents(); 
+	    ob_end_clean(); 
+    }
+    //$size=strlen($img);
+    //文件大小 
+    $fp2=@fopen($save_dir.$filename,'a');
+    fwrite($fp2,$img);
+    fclose($fp2);
+	unset($img,$url);
+    return array('file_name'=>$filename,'save_path'=>$save_dir.$filename,'error'=>0);
+}
+
+ /**
+ * 请求接口返回内容
+ * @param  string $url [请求的URL地址]
+ * @param  string $params [请求的参数]
+ * @param  int $ipost [是否采用POST形式]
+ * @return  string
+ */
+function juhecurl($url,$params=false,$ispost=0){
+    $httpInfo = array();
+    $ch = curl_init();
+    curl_setopt( $ch, CURLOPT_HTTP_VERSION , CURL_HTTP_VERSION_1_1 );
+    curl_setopt( $ch, CURLOPT_USERAGENT , 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.22 (KHTML, like Gecko) Chrome/25.0.1364.172 Safari/537.22' );
+    curl_setopt( $ch, CURLOPT_CONNECTTIMEOUT , 30 );
+    curl_setopt( $ch, CURLOPT_TIMEOUT , 30);
+    curl_setopt( $ch, CURLOPT_RETURNTRANSFER , true );
+    if( $ispost )
+    {
+        curl_setopt( $ch , CURLOPT_POST , true );
+        curl_setopt( $ch , CURLOPT_POSTFIELDS , $params );
+        curl_setopt( $ch , CURLOPT_URL , $url );
+    }
+    else
+    {
+        if($params){
+            curl_setopt( $ch , CURLOPT_URL , $url.'?'.$params );
+        }else{
+            curl_setopt( $ch , CURLOPT_URL , $url);
+        }
+    }
+    $response = curl_exec( $ch );
+    if ($response === FALSE) {
+        //echo "cURL Error: " . curl_error($ch);
+        return false;
+    }
+    $httpCode = curl_getinfo( $ch , CURLINFO_HTTP_CODE );
+    $httpInfo = array_merge( $httpInfo , curl_getinfo( $ch ) );
+    curl_close( $ch );
+    return $response;
+
+}
+
+
+// cURL函数简单封装
+ function https_request($url, $data = null)
+ {
+      $curl = curl_init();
+      curl_setopt($curl, CURLOPT_URL, $url);
+      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+      curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+      if (!empty($data)){
+       curl_setopt($curl, CURLOPT_POST, 1);
+       curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+      }
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+      $output = curl_exec($curl);
+      curl_close($curl);
+      return $output;
+
 }
 
 ?>
