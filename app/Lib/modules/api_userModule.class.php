@@ -363,5 +363,25 @@ class api_userModule extends BaseModule
 //        exit;
         return parent::JsonSuccess(['total'=>$total,'lists'=>$lists]);
     }
+    
+    //积分记录
+    public function myscore(){
+        $user_id = es_cookie::get('id');
+        if(!$user_id){
+            return parent::JsonError('用户未登录');
+        }
+        
+        $page_size = 15;
+        $page = intval($_REQUEST['page']);
+        if($page==0)
+        $page = 1;
+        $limit = (($page-1)*$page_size).",".$page_size;
+        
+        $total = $GLOBALS['db']->getOne('select score from '.DB_PREFIX."user where id=".$user_id);
+        $lists = $GLOBALS['db']->getAll('select id,log_info,log_time,score,from_user_id from '.DB_PREFIX."user_scorelog where user_id=".$user_id." order by log_time desc,id desc limit ".$limit);
+//        var_dump($lists);
+//        exit;
+        return parent::JsonSuccess(['total'=>$total,'lists'=>$lists]);
+    }
 }
 ?>
