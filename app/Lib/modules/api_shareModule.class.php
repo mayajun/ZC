@@ -27,9 +27,13 @@ class api_shareModule extends BaseModule
         $data['created_at'] = time();
         $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "deal_share", $data);
         if ($res) {
+
             return parent::JsonSuccess();
+
         } else {
+
             return parent::JsonError('操作失败');
+
         }
     }
 
