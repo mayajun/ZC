@@ -202,5 +202,98 @@ class api_userModule extends BaseModule
         }
         
     }
+    
+    /**
+     * 钱包 收支明细
+     * **/
+    public function credit()
+    {
+
+        if(!$_REQUEST['user_id']){
+            return JsonError('用户ID为空');
+        }
+        
+        $page_size = 15;
+        $page = intval($_REQUEST['page']);
+        if($page==0)
+        $page = 1;
+        $limit = (($page-1)*$page_size).",".$page_size;
+
+        $condition =" and money <>0";
+        $day=intval(strim($_REQUEST['day']));
+        //$day=intval(str_replace("ne","-",$day));
+        if($day!=0){
+                $now_date=to_timespan(to_date(NOW_TIME,'Y-m-d'),'Y-m-d');
+                $last_date=$now_date+$day*24*3600;
+                if($day>0){
+                        $condition.=" and log_time>=$now_date and  log_time<$last_date  ";
+                }else{
+                        $condition.=" and log_time>$last_date and  log_time<=$now_date  ";
+                }
+                $GLOBALS['tmpl']->assign('day',$day);
+        }
+        $begin_time=strim($_REQUEST['begin_time']);
+        if($begin_time!=0){
+                $begin_time=to_timespan($begin_time,'Y-m-d');
+                $condition.=" and log_time>=$begin_time ";
+                $GLOBALS['tmpl']->assign('begin_time',to_date($begin_time,'Y-m-d'));
+        }
+        $end_time=strim($_REQUEST['end_time']);
+        if($end_time!=0){
+                $end_time=to_timespan($end_time,'Y-m-d');
+                $condition.=" and log_time<$end_time ";
+                $GLOBALS['tmpl']->assign('end_time',to_date($end_time,'Y-m-d'));
+
+        }
+        if($_REQUEST['begin_money']==='0'){
+                $condition.=" and money>=0 ";
+                $GLOBALS['tmpl']->assign('begin_money',0);
+        }else{
+                $begin_money=floatval($_REQUEST['begin_money']);
+                if($begin_money!=0){
+                        $condition.=" and money>=$begin_money ";
+                        $GLOBALS['tmpl']->assign('begin_money',$begin_money);
+
+                }
+        }
+
+        if($_REQUEST['end_money']==='0'){
+                $condition.=" and money<=0 ";
+                $GLOBALS['tmpl']->assign('end_money',0);
+        }else{
+                $end_money=floatval($_REQUEST['end_money']);
+                if($end_money!=0){
+                        $condition.=" and money<=$end_money ";
+                        $GLOBALS['tmpl']->assign('end_money',$end_money);
+
+                }
+        }
+
+        $type=intval($_REQUEST['type']);
+        if($type>0){
+                switch($type){
+                        //我的收入
+                        case 1:
+                        $condition.=" and type=0 and money>0 ";
+                        break;
+                        //我的支出
+                        case 2:
+                        $condition.=" and type=0 and money<0 ";
+                        break;
+                        //我的提现
+                        case 3:
+                        $condition.=" and type=4  ";
+                        break;
+
+                }
+                $GLOBALS['tmpl']->assign('type',$type);
+        }
+
+
+        $log_list = $GLOBALS['db']->getAll("select * from ".DB_PREFIX."user_log where user_id = ".intval($GLOBALS['user_info']['id'])."   $condition order by log_time desc,id desc limit ".$limit);
+        $log_count = $GLOBALS['db']->getOne("select count(*) from ".DB_PREFIX."user_log where user_id = ".intval($GLOBALS['user_info']['id'])."  $condition ");
+
+        
+    }
 }
 ?>
