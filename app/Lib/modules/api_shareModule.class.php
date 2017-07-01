@@ -16,16 +16,25 @@ class api_shareModule extends BaseModule
     // 发起一起帮
     public function share()
     {
-        if (!$_REQUEST) {
-            return parent::JsonError('参数错误');
+        if (!$_POST) {
+            return parent::JsonError('请求失败');
         }
-        $data['user_id'] = $_REQUEST['user_id'];
-        $data['deal_id'] = $_REQUEST['deal_id'];
-        $data['share_name'] = $_REQUEST['share_name'];
-        $data['share_des'] = $_REQUEST['share_des'];
-        $data['share_goal'] = $_REQUEST['share_goal'];
-        $data['created_at'] = time();
+        if (!$user_id = intval(es_cookie::get("id"))) {
+            return parent::JsonError('登录状态异常');
+        }
+        foreach ($_POST as $k => $v) {
+            $postData[$k] = strim($v);
+        }
+
+        $data['user_id'] = $user_id;
+        $data['deal_id'] = $postData['deal_id'];
+        $data['share_name'] = $postData['share_name'];
+        $data['share_des'] = $postData['share_des'];
+        $data['share_goal'] = $postData['share_goal'];
+        $data['created_at'] = $this->now;
+
         $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "deal_share", $data);
+
         if ($res) {
             return parent::JsonSuccess();
         } else {
@@ -36,36 +45,49 @@ class api_shareModule extends BaseModule
     // 获取我的一起帮列表
     public function myShare()
     {
-        if (!$_REQUEST['user_id']) {
-            return parent::JsonError('参数错误');
+        if (!$user_id = intval(es_cookie::get("id"))) {
+            return parent::JsonError('登录状态异常');
         }
-        $user_id = $_REQUEST['user_id'];
-        // 每页条数
-        $item = 8;
-        $page = $_REQUEST['page'] ? intval($_REQUEST['page']) : 1;
-
-        $limit['start'] = $item * ($page - 1);
-        $limit['end'] = $item * $page;
-
+        // 分页函数
+        $limit = parent::paging($_REQUEST['page']);
         // 查询我的一起帮
         $res = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_share where user_id = " . $user_id . " order by id desc LIMIT {$limit['start']},{$limit['end']}");
 
-        if (!$res) {
+        if ($res) {
+
+            foreach ($res as $key => $value) {
+                // 获取众筹图片
+                $dealInfo = $GLOBALS['db']->getAll("SELECT image FROM " . DB_PREFIX . "deal where id=" . $value['deal_id']);
+                $res[$key]['deal_image'] = API_DOMAIN . substr(current($dealInfo)['image'],1);
+                // 添加完成度
+                if ($value['share_goal'] === 0) {
+                    $res[$key]['completion'] = "0%";
+                    continue;
+                }
+                $res[$key]['completion'] = intval(($value['share_raise'] / $value['share_goal']) * 100) . "%";
+            }
+
+            return parent::JsonSuccess($res);
+
+        } else {
             return parent::JsonError('暂无数据');
         }
-        return parent::JsonSuccess($res);
     }
 
     // 获取一起帮详情
     public function shareDetail()
     {
-        if (!$_REQUEST['id']) {
-            return parent::JsonError('参数错误');
+        if (!$_POST) {
+            return parent::JsonError('请求失败');
         }
+        if (!$user_id = intval(es_cookie::get("id"))) {
+            return parent::JsonError('登录状态异常');
+        }
+        $data['id'] = intval($_POST['id']);
+        $where = " where user_id = " . $user_id . " and id = " . $data['id'];
 
         // 查询我的一起帮
-        $res = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_share where id = " . $_REQUEST['id']);
-
+        $res = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_share" . $where);
         if (!$res) {
             return parent::JsonError('暂无数据');
         }
@@ -81,29 +103,27 @@ class api_shareModule extends BaseModule
         return parent::JsonSuccess($res);
     }
 
-    // 修改一起帮
+    // 编辑一起帮
     public function updateShare()
     {
-        if (!$_REQUEST['id']) {
-            return parent::JsonError('参数错误');
+        if (!$_POST) {
+            return parent::JsonError('请求失败');
         }
-        // // 查询我的一起帮
-        // $shareInfo = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_share where id = " . $_REQUEST['id']);
-        //
-        // if (!$shareInfo) {
-        //     return parent::JsonError('暂无数据');
-        // }
-        //
-        // $shareInfo = current($shareInfo);
-        // // 判断所属
-        // if (!$shareInfo['user_id'] != $_REQUEST['user_id']) {
-        //     return parent::JsonError('操作非法');
-        // }
+        if (!$user_id = intval(es_cookie::get("id"))) {
+            return parent::JsonError('登录状态异常');
+        }
+        foreach ($_POST as $k => $v) {
+            $postData[$k] = strim($v);
+        }
+        $where = ' set ';
+        $data['share_name'] = $postData['share_name'];
+        $data['share_des'] = $postData['share_des'];
+        $data['share_goal'] = intval($postData['share_goal']);
+        foreach ($data as $key => $val) {
+            $where .= $key . "={$val} ";
+        }
 
-        $data['share_name'] = $_REQUEST['share_name'];
-        $data['share_des'] = $_REQUEST['share_des'];
-        $data['share_goal'] = $_REQUEST['share_goal'];
-        $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "deal_share", $data, "UPDATE", "id=" . intval($_REQUEST['id']));
+        $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "deal_share", $data, "UPDATE", "id=" . intval($postData['id']));
 
         if ($res) {
             return parent::JsonSuccess();
@@ -113,15 +133,23 @@ class api_shareModule extends BaseModule
     }
 
     // 删除一起帮
-    public function delOrder()
+    public function delShare()
     {
-        $res = $GLOBALS['db']->query("delete from " . DB_PREFIX . "deal_share where id =" . $_REQUEST['id']);
+        if (!$_POST) {
+            return parent::JsonError('请求失败');
+        }
+        if (!$user_id = intval(es_cookie::get("id"))) {
+            return parent::JsonError('登录状态异常');
+        }
+        $data['id'] = intval($_POST['id']);
+        $res = $GLOBALS['db']->query("delete from " . DB_PREFIX . "deal_share where id =" . $data['id']);
         if ($res === 0) {
             return parent::JsonError('操作失败');
         } else {
             return parent::JsonSuccess();
         }
     }
+
 
 }
 

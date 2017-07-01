@@ -113,6 +113,26 @@ class BaseModule
         die;
     }
 
+    /**
+     * 分页函数
+     */
+    public function paging($page)
+    {
+        if($page){
+            // 默认为分页为1
+            $page = intval($page);
+        } else {
+            $page = 1;
+        }
+        // 每页条数
+        $item = 8;
+        // 定义起止limit语句参数
+        $limit['start'] = $item * ($page - 1);
+        $limit['end'] = $item * $page;
+
+        return $limit;
+    }
+
 }
 
 ?>
