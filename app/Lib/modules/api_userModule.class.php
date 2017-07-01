@@ -15,7 +15,8 @@ class api_userModule extends BaseModule
      * 用户信息页面
      * **/
     public function index(){
-        $id = $_REQUEST['id'];
+//        $id = $_REQUEST['id'];
+        $id = es_cookie::get('id');
         if(!$id){
             return parent::JsonError('参数错误');
         }
@@ -40,11 +41,11 @@ class api_userModule extends BaseModule
      * **/
     public function update(){
         $user_data = $_REQUEST;
-
+        $id = es_cookie::get('id');
         if(!$_REQUEST){
             return parent::JsonError('参数错误');
         }
-        $res = $GLOBALS['db']->autoExecute(DB_PREFIX."user",$user_data,"UPDATE","id=".intval($_REQUEST['id']));
+        $res = $GLOBALS['db']->autoExecute(DB_PREFIX."user",$user_data,"UPDATE","id=".$id);
 
         if($res){
             return parent::JsonSuccess();
@@ -58,6 +59,7 @@ class api_userModule extends BaseModule
      * **/
     public function addressEdit(){
         $data = $_REQUEST;
+        $data['user_id'] = es_cookie::get('id');
         if(!$_REQUEST){
             return parent::JsonError('参数错误');
         }
@@ -101,8 +103,8 @@ class api_userModule extends BaseModule
      * **/
     public function addressDel(){
         $data = $_REQUEST;
-        
-        $res = $GLOBALS['db']->query("delete from ".DB_PREFIX."user_consignee where user_id=".$data['user_id']." and id=".$data['id']);
+        $user_id = es_cookie::get('id');
+        $res = $GLOBALS['db']->query("delete from ".DB_PREFIX."user_consignee where user_id=".$user_id." and id=".$data['id']);
         
         if($res==0){
             return parent::JsonError('操作失败');
@@ -116,7 +118,7 @@ class api_userModule extends BaseModule
      * 我的关注列表
      * **/
     public function myFocus(){
-        $user_id = $_REQUEST['user_id'];
+        $user_id = es_cookie::get('id');
         $page = $_REQUEST['page'];
         $pagesize = 15;
         $offset = $page * $pagesize;
@@ -133,6 +135,7 @@ class api_userModule extends BaseModule
      * 退出登录
      * **/
     public function loginout(){
+        es_cookie::delete('id');
         es_cookie::delete("email");
         es_cookie::delete("user_pwd");
         es_cookie::delete("hide_user_notify");
@@ -145,7 +148,7 @@ class api_userModule extends BaseModule
      * 银行卡列表
      * **/
     public function bankLists(){
-        $user_id = $_REQUEST['user_id'];
+        $user_id = es_cookie::get('id');
         $lists = $GLOBALS['db']->getAll("select id,bank_name,bankcard,real_name,genre from ".DB_PREFIX."user_bank where user_id=".$user_id);
         
         if($lists==0){
@@ -160,7 +163,7 @@ class api_userModule extends BaseModule
      * 添加银行卡页面，获取银行列表
      * **/
     public function bank(){
-        $user_id = $_REQUEST['user_id'];
+        $user_id = es_cookie::get('id');
         $lists = $GLOBALS['db']->getAll("select id,name from ".DB_PREFIX."bank");
         
         if($lists==0){
@@ -192,8 +195,8 @@ class api_userModule extends BaseModule
      * **/
     public function bankDel(){
         $data = $_REQUEST;
-        
-        $res = $GLOBALS['db']->query("delete from ".DB_PREFIX."user_bank where user_id=".$data['user_id']." and id=".$data['id']);
+        $user_id = es_cookie::get('id');
+        $res = $GLOBALS['db']->query("delete from ".DB_PREFIX."user_bank where user_id=".$user_id." and id=".$data['id']);
         
         if($res==0){
             return parent::JsonError('操作失败');
@@ -208,11 +211,11 @@ class api_userModule extends BaseModule
      * **/
     public function credit()
     {
-
-        if(!$_REQUEST['user_id']){
+        $uid = es_cookie::get('id');
+        if(!$uid){
             return parent::JsonError('用户ID为空');
         }
-        $uid = intval($_REQUEST['user_id']);
+        
         $page_size = 15;
         $page = intval($_REQUEST['page']);
         if($page==0)
@@ -310,7 +313,7 @@ class api_userModule extends BaseModule
     
     //爱心值
     public function loveValue(){
-        $user_id = $_REQUEST['user_id'];
+        $user_id = es_cookie::get('id');
         if(!$user_id){
             return parent::JsonError('参数错误');
         }
@@ -326,7 +329,7 @@ class api_userModule extends BaseModule
     
     //爱心值记录
     public function lovelog(){
-        $user_id = $_REQUEST['user_id'];
+        $user_id = es_cookie::get('id');
         if(!$user_id){
             return parent::JsonError('参数错误');
         }
@@ -387,10 +390,10 @@ class api_userModule extends BaseModule
    /**
     * 说明：生成二维码并将路径存入数据库
     * **/
-   public function getQrcode(){
+   public function getQrcode($pid){
         //生成新二维码并存放在指定目录中
         $user_id = es_cookie::get('id');
-        $res = getImage($user_id,"public/images/qrcode","user_".$user_id.".png");
+        $res = getImage($pid,"public/images/qrcode","user_".$user_id.".png");
         
         //二维码路径+名称
         $path = $res['save_path'];

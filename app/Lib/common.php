@@ -1447,7 +1447,7 @@ function get_center_deal_url(){
 */
 function getImage($pid,$save_dir='',$filename='',$type=0){
         $ip = $_SERVER['REMOTE_ADDR'];
-	$url = "http://qr.liantu.com/api.php?bg=f3f3f3&fg=ff0000&gc=222222&el=l&w=200&m=10&text=http://".$ip."/public/register?pid=".$pid.".html";//在线二维码生成器
+	$url = "http://qr.liantu.com/api.php?bg=f3f3f3&fg=ff0000&gc=222222&el=l&w=200&m=10&text=http://".$ip."/index.php?ctl=api_register&act=register&pid=".$pid.".html";//在线二维码生成器
     if(trim($url)==''){
 		return array('file_name'=>'','save_path'=>'','error'=>1);
 	}

@@ -14,7 +14,9 @@ class api_registerModule extends BaseModule
         $mobile = $_REQUEST['mobile'];
         $vertify = $_REQUEST['vertify'];
         $password = $_REQUEST['password'];
-
+        //判断是否有推荐人
+        $pid = $_REQUEST['pid']?$_REQUEST['pid']:0;
+        
 
 
         $session_mobile = $_SESSION['mobile'];
@@ -32,17 +34,30 @@ class api_registerModule extends BaseModule
         }else{
 
              if($mobile == $session_mobile && $vertify == $session_vertify){
-
+                 
                 $code = ""; //首次可以修改加密
                 $passwords = md5($password);
                 $data = array(
+                    'pid'=>$pid,
                     'mobile'=>$mobile,
                     'user_pwd'=>$passwords,
                     'user_name'=>$mobile,
                     'create_time'=>1111111,
                     );
                 $res = $GLOBALS['db']->autoExecute(DB_PREFIX."user",$data);
-
+                $uid = $GLOBALS['db']->getOne('select id from '.DB_PREFIX.'user where user_name='.$mobile);
+                 //生成推荐二维码
+                $res = getImage($uid,"public/images/qrcode","user_".$uid.".png");
+                //二维码路径+名称
+                $path = $res['save_path'];
+                //将路径存入数据库
+                $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('rec_image'=>$path),"UPDATE",'id='.$uid);
+                //注册成功后，给上级用户增加200积分
+                if($pid){
+                    $score = $GLOBALS['db']->getOne('select score from '.DB_PREFIX.'user where id='.$pid);
+                    $new_score = $score + 200;
+                    $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('score'=>$new_score),"UPDATE",'id='.$pid);
+                }
 
                 if($res){
 
@@ -51,7 +66,6 @@ class api_registerModule extends BaseModule
                         'mobile'=>$mobile,
                         'password'=>$password
                         );
-
                     return parent::JsonSuccess($res);
 
                 }else{
