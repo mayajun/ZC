@@ -120,15 +120,16 @@ class api_userModule extends BaseModule
      * **/
     public function myFocus(){
         $user_id = es_cookie::get('id');
-        $page = $_REQUEST['page'];
+        $page = $_REQUEST['page']?$_REQUEST['page']:0;
         $pagesize = 15;
         $offset = $page * $pagesize;
 
-        $lists = $GLOBALS['db']->getAll("select d.id,d.name,d.image,d.is_effect,d.begin_time,d.end_time,d.is_success from ".DB_PREFIX."deal_focus_log as f left join ".DB_PREFIX."deal as d on d.id=f.deal_id where f.user_id=".$user_id." limit(".$offset.",".$pagesize.")");
+        $lists = $GLOBALS['db']->getAll("select d.id,d.name,d.image,d.is_effect,d.begin_time,d.end_time,d.is_success from ".DB_PREFIX."deal_focus_log as f left join ".DB_PREFIX."deal as d on d.id=f.deal_id where f.user_id=".$user_id." limit ".$offset.",".$pagesize);
+        
         if($lists){
             return parent::JsonSuccess($lists);
         }else{
-            return parent::JsonError();
+            return parent::JsonError('暂无数据');
         }
     }
 
