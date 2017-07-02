@@ -16,6 +16,7 @@ class api_userModule extends BaseModule
      * **/
     public function index(){
 //        $id = $_REQUEST['id'];
+        es_cookie::set('id',19,3600*24);
         $id = es_cookie::get('id');
         if(!$id){
             return parent::JsonError('参数错误');
@@ -390,10 +391,10 @@ class api_userModule extends BaseModule
    /**
     * 说明：生成二维码并将路径存入数据库
     * **/
-   public function getQrcode($pid){
+   public function getQrcode(){
         //生成新二维码并存放在指定目录中
         $user_id = es_cookie::get('id');
-        $res = getImage($pid,"public/images/qrcode","user_".$user_id.".png");
+        $res = getImage($user_id,"public/images/qrcode","user_".$user_id.".png");
         
         //二维码路径+名称
         $path = $res['save_path'];
