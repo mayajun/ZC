@@ -22,8 +22,9 @@ class api_userModule extends BaseModule
             return parent::JsonError('参数错误');
         }
         //用户信息
-        $info = $GLOBALS['db']->getRow("select id,user_name,age,mobile,thirdbind,thirdnum from ".DB_PREFIX."user where id=".$id);
+        $info = $GLOBALS['db']->getRow("select id,user_name,age,mobile,thirdbind,thirdnum,rec_image from ".DB_PREFIX."user where id=".$id);
         $info['head'] = get_user_avatar($info['id'],'middle');
+        $info['rec_image'] = API_DOMAIN."/".$info['rec_image'];
         //银行卡
         $bank = $GLOBALS['db']->getRow("select * from ".DB_PREFIX."user_bank where user_id=".$id);
         $bankName = $GLOBALS['db']->getOne("select name from ".DB_PREFIX."bank where id=".$bank['bank_id']);
