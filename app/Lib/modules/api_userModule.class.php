@@ -421,8 +421,8 @@ class api_userModule extends BaseModule
     }
     //去互助项目，给上级返利红包
     public function rebate_red(){
-        $user_id = 22;
-//        $user_id = es_cookie::get('id');
+//        $user_id = 22;
+        $user_id = es_cookie::get('id');
         $user_info = $GLOBALS['db']->getRow('select user_name,pid from '.DB_PREFIX.'user where id='.$user_id);
         
         redFun($user_id,5);
@@ -431,8 +431,8 @@ class api_userModule extends BaseModule
     
     //我的下线创造的积分，钱，红包，下线
     public function myChild(){
-        $user_id = 18;
-//        $user_id = es_cookie::get('id');
+//        $user_id = 18;
+        $user_id = es_cookie::get('id');
         //我的积分
         $score = $GLOBALS['db']->getOne('select score from '.DB_PREFIX."user where id=".$user_id);
         //下级给我创造的钱
