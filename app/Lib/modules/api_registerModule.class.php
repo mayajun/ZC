@@ -52,11 +52,18 @@ class api_registerModule extends BaseModule
                 $path = $res['save_path'];
                 //将路径存入数据库
                 $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('rec_image'=>$path),"UPDATE",'id='.$uid);
-                //注册成功后，给上级用户增加200积分
+                //注册成功后，给上级用户增加200积分 上级的上级50积分
                 if($pid){
-                    $score = $GLOBALS['db']->getOne('select score from '.DB_PREFIX.'user where id='.$pid);
+                    $pid_info = $GLOBALS['db']->getOne('select score,pid from '.DB_PREFIX.'user where id='.$pid);
+                    $score = $pid_info['score'];
                     $new_score = $score + 200;
                     $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('score'=>$new_score),"UPDATE",'id='.$pid);
+                    if($pid_info['pid']){
+                        $score = $GLOBALS['db']->getOne('select score from '.DB_PREFIX.'user where id='.$pid_info['pid']);
+                        $new_score = $score + 50;
+                        $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('score'=>$new_score),"UPDATE",'id='.$pid_info['pid']);
+                        
+                    }
                 }
 
                 if($res){

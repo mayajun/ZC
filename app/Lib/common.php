@@ -1551,5 +1551,49 @@ function juhecurl($url,$params=false,$ispost=0){
       return $output;
 
 }
+    
+    //返利红包公共方法
+    function redFun($user_id,$rebate){
+        $user_info = $GLOBALS['db']->getRow('select user_name,pid from '.DB_PREFIX.'user where id='.$user_id);
+        if($user_info['pid']){
+            //原红包总金额
+            $red_money = $GLOBALS['db']->getOne('select red_money from '.DB_PREFIX.'user where id='.$user_info['pid']);
+            $new_money = $red_money + $rebate;
+            //将最新红包余额存入用户表
+            $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('red_money'=>$new_money),"UPDATE",'id='.$user_info['pid']); 
+            //添加红包记录
+            $log = array(
+                'log_info'      =>      $user_info['user_name'].'向你返利'.$rebate.'元红包。',
+                'log_time'      =>      time(),
+                'money'         =>      $rebate,
+                'user_id'       =>      $user_info['pid'],
+                'type'          =>      5,//返利
+                'from_user_id'  =>      $user_id,
+            );
+            $GLOBALS['db']->autoExecute(DB_PREFIX."user_redlog",$log);
+        }
+    }
+    
+    //返利公共方法
+    function rebateFun($user_id,$rebate){
+        $user_info = $GLOBALS['db']->getRow('select user_name,pid from '.DB_PREFIX.'user where id='.$user_id);
+        if($user_info['pid']){
+            //原钱包金额
+            $money = $GLOBALS['db']->getOne('select money from '.DB_PREFIX.'user where id='.$user_info['pid']);
+            $new_money = $money + $rebate;
+            //将最新钱包余额存入用户表
+            $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('money'=>$new_money),"UPDATE",'id='.$user_info['pid']); 
+            //添加钱包记录
+            $log = array(
+                'log_info'      =>      $user_info['user_name'].'向你返利'.$rebate."元。",
+                'log_time'      =>      time(),
+                'money'         =>      $rebate,
+                'user_id'       =>      $user_info['pid'],
+                'type'          =>      5,//返利
+                'from_user_id'  =>      $user_id,
+            );
+            $GLOBALS['db']->autoExecute(DB_PREFIX."user_log",$log); 
+        }
+    }
 
 ?>

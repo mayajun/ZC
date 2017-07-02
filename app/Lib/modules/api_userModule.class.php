@@ -402,5 +402,57 @@ class api_userModule extends BaseModule
         //将路径存入数据库
         $GLOBALS['db']->autoExecute(DB_PREFIX."user",array('rec_image'=>$path),"UPDATE",'id='.$user_id);
    }
+   
+    /**分销返利开始**(此处操作应在用户付款收到支付回调后执行)*/
+    //去众筹买商品，给上级返利商品的5%
+    public function rebate(){
+//        $price = 10000;//临时测试数据
+//        $user_id = 22;
+        $user_id = es_cookie::get('id');
+        $user_info = $GLOBALS['db']->getRow('select user_name,pid from '.DB_PREFIX.'user where id='.$user_id);
+        
+        //返利
+        $rebate_1 = $price * 0.2;
+        $rebate_2 = $price * 0.05;
+        
+        rebateFun($user_id,$rebate_1);
+        rebateFun($user_info['pid'],$rebate_2);
+            
+    }
+    //去互助项目，给上级返利红包
+    public function rebate_red(){
+        $user_id = 22;
+//        $user_id = es_cookie::get('id');
+        $user_info = $GLOBALS['db']->getRow('select user_name,pid from '.DB_PREFIX.'user where id='.$user_id);
+        
+        redFun($user_id,5);
+        redFun($user_info['pid'],3);
+    }
+    
+    //我的下线创造的积分，钱，红包，下线
+    public function myChild(){
+        $user_id = 18;
+//        $user_id = es_cookie::get('id');
+        //我的积分
+        $score = $GLOBALS['db']->getOne('select score from '.DB_PREFIX."user where id=".$user_id);
+        //下级给我创造的钱
+        $rebate = $GLOBALS['db']->getOne('select count(money) as count from '.DB_PREFIX."user_log where type=5 and user_id=".$user_id);
+        //红包
+        $red = $GLOBALS['db']->getOne('select red_money from '.DB_PREFIX."user where id=".$user_id);
+        //我的下线
+        $child = $GLOBALS['db']->getAll('select id,user_name from '.DB_PREFIX."user where pid=".$user_id);
+        $ids = array();
+        foreach($child as $k=>$v){
+            $ids[] = $v['id'];
+        }
+        $ids = implode(',', $ids);
+        $lists = $GLOBALS['db']->getAll('select id,user_name from '.DB_PREFIX."user where pid in(".$ids.")");
+        $child = array_merge($child, $lists);
+        
+        return parent::JsonSuccess(['score'=>$score,'rebate'=>$rebate,'red'=>$red,'child'=>$child]);
+    }
+
+
+    /**分销返利结束***/
 }
 ?>
