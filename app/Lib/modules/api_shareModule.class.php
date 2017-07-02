@@ -141,7 +141,7 @@ class api_shareModule extends BaseModule
             $where .= $key . "={$val} ";
         }
 
-        $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "deal_share", $data, "UPDATE", "id=" . intval($postData['id']));
+        $res = $GLOBALS['db']->autoExecute(DB_PREFIX."deal_share",$data,'UPDATE'," id = ".intval($postData['id']));
 
         if ($res) {
             return parent::JsonSuccess();
@@ -160,11 +160,19 @@ class api_shareModule extends BaseModule
             return parent::JsonError('登录状态异常');
         }
         $data['id'] = intval($_POST['id']);
-        $res = $GLOBALS['db']->query("delete from " . DB_PREFIX . "deal_share where id =" . $data['id']);
-        if ($res === 0) {
+        // 查询一起帮是否存在
+        $resS = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_share where id =" . $data['id']);
+
+        if(!$resS){
             return parent::JsonError('操作失败');
-        } else {
+        }
+
+        $res = $GLOBALS['db']->query("delete from " . DB_PREFIX . "deal_share where id =" . $data['id']);
+
+        if ($res) {
             return parent::JsonSuccess();
+        } else {
+            return parent::JsonError('操作失败');
         }
     }
 

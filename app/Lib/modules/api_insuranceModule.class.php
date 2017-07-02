@@ -16,23 +16,28 @@ class api_insuranceModule extends BaseModule
     // 创建保险类型
     public function createInsurance()
     {
-        // 接收数据
-        if (!$_REQUEST['name']) {
-            return parent::JsonError('参数错误');
+        if (!$_POST) {
+            return parent::JsonError('请求失败');
         }
-        if (!empty($_REQUEST['pid'])) {
-            $data['pid'] = $_REQUEST['pid'];
+        if (!$user_id = intval(es_cookie::get("id"))) {
+            return parent::JsonError('登录状态异常');
         }
-        $data['name'] = $_REQUEST['name'];
-        $data['image'] = $_REQUEST['image'];
-        $data['money'] = $_REQUEST['money'];
-        $data['term'] = intval($_REQUEST['term']);
-        $data['age_min'] = intval($_REQUEST['age_min']);
-        $data['age_max'] = intval($_REQUEST['age_max']);
-        $data['limit_time'] = intval($_REQUEST['limit_time']);
-        $data['observation'] = intval($_REQUEST['observation']);
-        $data['flow'] = $_REQUEST['flow'];
-        $data['cases'] = $_REQUEST['cases'];
+        foreach ($_POST as $k => $v) {
+            $postData[$k] = strim($v);
+        }
+        if (!empty($postData['pid'])) {
+            $data['pid'] = $postData['pid'];
+        }
+        $data['name'] = $postData['name'];
+        $data['image'] = $postData['image'];
+        $data['money'] = intval($postData['money']);
+        $data['term'] = intval($postData['term']);
+        $data['age_min'] = intval($postData['age_min']);
+        $data['age_max'] = intval($postData['age_max']);
+        $data['limit_time'] = intval($postData['limit_time']);
+        $data['observation'] = intval($postData['observation']);
+        $data['flow'] = $postData['flow'];
+        $data['cases'] = $postData['cases'];
         $data['created_at'] = $this->now;
         $data['updated_at'] = $this->now;
 
@@ -50,9 +55,9 @@ class api_insuranceModule extends BaseModule
     public function insuranceList()
     {
         if ($_REQUEST['status']) {
-            $where = "and status = '{$_REQUEST['status']}' ";
+            $where = "where status = '{$_REQUEST['status']}' ";
         } else {
-            $where = '';
+            $where = "where status <> 'deleted'";
         }
         // 查询分类语句
         $selData = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "insurance " . $where . " order by id desc");
@@ -105,7 +110,7 @@ class api_insuranceModule extends BaseModule
     //     return parent::JsonError('参数错误');
     // }
 
-    // 删除订单
+    // 删除保险类型
     public function delInsurance()
     {
         if (!empty($_REQUEST['id'])) {
@@ -114,6 +119,13 @@ class api_insuranceModule extends BaseModule
         } else {
             return parent::JsonError('参数丢失！');
         }
+        // 查询状态值
+        $resS = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "insurance where id =" . $_REQUEST['id']." and status = 'deleted'");
+
+        if($resS){
+            return parent::JsonError('操作失败');
+        }
+
         $res = $GLOBALS['db']->autoExecute(DB_PREFIX . "insurance", $data, "UPDATE", "id=" . intval($_REQUEST['id']));
         if (!$res) {
             return parent::JsonError('删除失败');
