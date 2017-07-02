@@ -52,8 +52,22 @@ class api_shareModule extends BaseModule
         if (!$user_id = intval(es_cookie::get("id"))) {
             return parent::JsonError('登录状态异常');
         }
+
+        
         // 分页函数
-        $limit = parent::paging($_REQUEST['page']);
+        if($_REQUEST['page']){
+            // 默认为分页为1
+            $page = intval($_REQUEST['page']);
+        } else {
+            $page = 1;
+        }
+        // 每页条数
+        $item = 8;
+        // 定义起止limit语句参数
+        $limit['start'] = $item * ($page - 1);
+        $limit['end'] = $item * $page;
+
+
         // 查询我的一起帮
         $res = $GLOBALS['db']->getAll("SELECT * FROM " . DB_PREFIX . "deal_share where user_id = " . $user_id . " order by id desc LIMIT {$limit['start']},{$limit['end']}");
 
